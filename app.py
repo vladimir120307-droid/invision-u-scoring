@@ -1,5 +1,3 @@
-# v3: validation module
-# v2: dark theme support
 import json
 import streamlit as st
 import pandas as pd
