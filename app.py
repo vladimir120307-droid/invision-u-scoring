@@ -120,6 +120,13 @@ def svg_icon(name, size=20, color="#94a3b8"):
         "zap": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="{color}" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
         "moon": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
         "sun": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+        "eye": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+        "bar-chart-2": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+        "activity": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+        "database": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+        "lock": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+        "info": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+        "crosshair": f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>',
     }
     return icons.get(name, "")
 
@@ -731,41 +738,53 @@ def _css_dark():
 def _css_light():
     """CSS specific to light theme."""
     return """
-        /* ===== Light background with dot pattern ===== */
+        /* ===== Light background with gradient + dot pattern ===== */
         .stApp {
-            background-color: #f8fafc !important;
-            background-image: radial-gradient(rgba(15,23,42,0.04) 1px, transparent 1px);
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 50%, #f0f4f8 100%) !important;
+            background-attachment: fixed !important;
+        }
+        .stApp::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(15,23,42,0.045) 1px, transparent 1px);
             background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        section.main > div.block-container {
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== Glass Card ===== */
         .glass-card {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(226,232,240,0.5);
+            border: 1px solid rgba(226,232,240,0.7);
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 4px 24px rgba(0,0,0,0.04);
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             animation: fadeInUp 0.5s ease-out;
         }
         .glass-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 12px rgba(13,148,136,0.08);
             border-color: rgba(13,148,136,0.3);
         }
 
         /* ===== Metric Cards ===== */
         .metric-card-v2 {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(226,232,240,0.5);
+            border: 1px solid rgba(226,232,240,0.7);
             border-radius: 16px;
             padding: 1.3rem 1rem;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.04);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: fadeInUp 0.5s ease-out;
             position: relative;
@@ -802,20 +821,20 @@ def _css_light():
 
         /* ===== Candidate Card ===== */
         .candidate-card-v2 {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(226,232,240,0.5);
+            border: 1px solid rgba(226,232,240,0.7);
             border-radius: 14px;
             padding: 1.2rem 1.5rem;
             margin-bottom: 0.75rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             border-left: 4px solid;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: slideInLeft 0.4s ease-out;
         }
         .candidate-card-v2:hover {
             transform: translateX(6px);
-            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
         }
         .candidate-name { font-size: 1.1rem; font-weight: 700; color: #0f172a; letter-spacing: -0.3px; }
         .candidate-meta { font-size: 0.82rem; color: #64748b; margin-top: 0.2rem; font-weight: 400; }
@@ -873,14 +892,15 @@ def _css_light():
 
         /* ===== Hero Section ===== */
         .hero-section {
-            background: linear-gradient(135deg, rgba(15,23,42,0.03), rgba(13,148,136,0.05));
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(13,148,136,0.06));
             border-radius: 20px;
             padding: 2rem;
-            border: 1px solid rgba(226,232,240,0.5);
+            border: 1px solid rgba(226,232,240,0.7);
             display: flex;
             gap: 1.5rem;
             align-items: center;
             animation: fadeInScale 0.5s ease-out;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         /* ===== Drag Drop Area ===== */
@@ -908,15 +928,16 @@ def _css_light():
 
         /* ===== NLP Metric Panel ===== */
         .nlp-metric-panel {
-            background: rgba(248,250,252,0.9);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(8px);
             border-radius: 12px;
             padding: 1rem;
             margin: 0.3rem 0;
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(226,232,240,0.7);
             transition: all 0.2s ease;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
         }
-        .nlp-metric-panel:hover { border-color: rgba(13,148,136,0.3); }
+        .nlp-metric-panel:hover { border-color: rgba(13,148,136,0.3); box-shadow: 0 2px 12px rgba(13,148,136,0.06); }
 
         /* ===== Custom Table Styling ===== */
         .styled-table {
@@ -925,7 +946,7 @@ def _css_light():
             border-spacing: 0;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
             font-size: 0.88rem;
         }
         .styled-table thead th {
@@ -953,9 +974,9 @@ def _css_light():
 
         /* ===== Mini card for top candidates ===== */
         .mini-card {
-            background: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.92);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(226,232,240,0.5);
+            border: 1px solid rgba(226,232,240,0.7);
             border-radius: 12px;
             padding: 0.8rem 1rem;
             margin-bottom: 0.4rem;
@@ -964,8 +985,9 @@ def _css_light():
             justify-content: space-between;
             transition: all 0.25s ease;
             animation: fadeInUp 0.5s ease-out;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
         }
-        .mini-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .mini-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
         .mini-card-rank { font-size: 1.1rem; font-weight: 800; color: #0d9488; min-width: 28px; }
         .mini-card-name { font-size: 0.88rem; font-weight: 600; color: #1e293b; flex: 1; margin-left: 0.6rem; }
         .mini-card-score { font-size: 0.9rem; font-weight: 700; }
@@ -982,6 +1004,23 @@ def _css_light():
 
         /* ===== Footer light ===== */
         .app-footer { color: #94a3b8; }
+
+        /* ===== Light header contrast ===== */
+        .main-header {
+            box-shadow: 0 8px 32px rgba(13,148,136,0.2), 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        /* ===== Light explanation box ===== */
+        .explanation-box {
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        }
+
+        /* ===== Light drag-drop ===== */
+        .drag-drop-area {
+            background: linear-gradient(135deg, rgba(13,148,136,0.04), rgba(59,130,246,0.04));
+            box-shadow: 0 1px 6px rgba(0,0,0,0.03);
+        }
 
         /* ===== Light text helpers ===== */
         .text-primary { color: #1e293b !important; }
@@ -1147,38 +1186,69 @@ def render_metrics_row(candidates):
 
 def page_dashboard():
     if not st.session_state.get("candidates"):
-        # Welcome hero block
+        # Hero block with problem statement
         st.markdown(f"""
-        <div class="glass-card" style="text-align:center; padding:2.5rem 2rem">
-            <div style="margin-bottom:1rem">{svg_icon("award", 56, "#0d9488")}</div>
-            <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.6rem">Добро пожаловать в inVision U</h2>
-            <p style="color:{_c("secondary")};margin-top:0.6rem;font-size:1rem;max-width:600px;margin-left:auto;margin-right:auto">
-                Интеллектуальная платформа для отбора кандидатов с объяснимым скорингом, NLP-анализом эссе и проверкой на ИИ-генерацию
-            </p>
+        <div class="glass-card" style="padding:2.5rem 2rem">
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem">
+                <div>{svg_icon("award", 44, "#0d9488")}</div>
+                <div>
+                    <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.5rem">Система отбора кандидатов inVision U</h2>
+                    <p style="color:{_c("secondary")};margin:0.2rem 0 0 0;font-size:0.9rem">Автоматизация первичного отбора для приёмной комиссии</p>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+                <div style="padding:1rem 1.2rem;border-radius:10px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444">
+                    <p style="font-weight:700;color:#ef4444;margin:0 0 0.4rem 0;font-size:0.85rem">ПРОБЛЕМА</p>
+                    <p style="color:{_c("primary")};margin:0;font-size:0.82rem;line-height:1.5">
+                        Ручная оценка заявок занимает сотни часов. Сильные кандидаты теряются из-за слабой самопрезентации. Генеративный ИИ размывает подлинный голос в эссе.
+                    </p>
+                </div>
+                <div style="padding:1rem 1.2rem;border-radius:10px;background:rgba(13,148,136,0.06);border-left:3px solid #0d9488">
+                    <p style="font-weight:700;color:#0d9488;margin:0 0 0.4rem 0;font-size:0.85rem">РЕШЕНИЕ</p>
+                    <p style="color:{_c("primary")};margin:0;font-size:0.82rem;line-height:1.5">
+                        ML-скоринг по 5 измерениям с NLP-анализом эссе, детекцией ИИ-генерации и объяснением каждой оценки. Human-in-the-loop.
+                    </p>
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
         st.markdown("")
 
-        # Quick-start steps
+        # Capabilities grid
         st.markdown(f"""
         <div class="glass-card" style="padding:1.5rem 2rem">
-            <p style="font-weight:700;font-size:1.1rem;color:{_c("heading")};margin:0 0 1rem 0">Быстрый старт</p>
-            <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.15)">
-                    <div style="font-size:1.8rem;font-weight:800;color:#0d9488;margin-bottom:0.3rem">1</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Загрузите данные</p>
-                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Импорт CSV/JSON или демо-набор</p>
+            <p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin:0 0 1rem 0">Возможности платформы</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+                <div style="padding:1rem;border-radius:10px;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("bar-chart-2", 28, "#0d9488")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Скоринг по 5 измерениям</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Мотивация, лидерство, рост, навыки, опыт</p>
                 </div>
-                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15)">
-                    <div style="font-size:1.8rem;font-weight:800;color:#3b82f6;margin-bottom:0.3rem">2</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Настройте веса</p>
-                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Настройки модели скоринга</p>
+                <div style="padding:1rem;border-radius:10px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("file-text", 28, "#3b82f6")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">NLP-анализ эссе</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Тональность, сложность, лексика, аутентичность</p>
                 </div>
-                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15)">
-                    <div style="font-size:1.8rem;font-weight:800;color:#8b5cf6;margin-bottom:0.3rem">3</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Анализируйте</p>
-                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Рейтинг, профили, аналитика</p>
+                <div style="padding:1rem;border-radius:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("shield", 28, "#8b5cf6")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Детекция ИИ-генерации</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Выявление ChatGPT и аналогов в текстах</p>
+                </div>
+                <div style="padding:1rem;border-radius:10px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("eye", 28, "#f59e0b")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Объяснимость (XAI)</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Прозрачные причины каждой оценки</p>
+                </div>
+                <div style="padding:1rem;border-radius:10px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("users", 28, "#ec4899")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Human-in-the-loop</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Ручная корректировка и комментарии комиссии</p>
+                </div>
+                <div style="padding:1rem;border-radius:10px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);text-align:center">
+                    <div style="margin-bottom:0.5rem">{svg_icon("check-circle", 28, "#10b981")}</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Fairness-анализ</p>
+                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Проверка на предвзятость по регионам и группам</p>
                 </div>
             </div>
         </div>
@@ -1186,23 +1256,22 @@ def page_dashboard():
 
         st.markdown("")
 
-        # Prominent demo button on main page
+        # Demo button
         col_l, col_center, col_r = st.columns([1, 2, 1])
         with col_center:
-            st.markdown(f"""
-            <div class="glass-card" style="text-align:center;padding:1.5rem;border:2px solid rgba(13,148,136,0.3)">
-                <div style="margin-bottom:0.6rem">{svg_icon("zap", 36, "#0d9488")}</div>
-                <p style="font-weight:700;color:{_c("heading")};font-size:1.05rem;margin:0">Начните прямо сейчас</p>
-                <p style="color:{_c("secondary")};font-size:0.85rem;margin:0.3rem 0 1rem 0">Загрузите демо-набор из 55 кандидатов для знакомства с платформой</p>
-            </div>
-            """, unsafe_allow_html=True)
-            if st.button("Загрузить демо-данные", type="primary", use_container_width=True, key="main_demo_btn"):
+            if st.button("Загрузить демо-данные и запустить скоринг", type="primary", use_container_width=True, key="main_demo_btn"):
                 with st.spinner("Генерация данных..."):
                     raw = generate_dataset(55, 42)
                     candidates = [dict_to_candidate(r) for r in raw]
                     st.session_state.candidates = candidates
-                    st.session_state.scored = False
                     save_dataset(raw)
+                with st.spinner("Запуск скоринга..."):
+                    config = st.session_state.get("scoring_config", ScoringConfig())
+                    engine = ScoringEngine(config)
+                    for c in candidates:
+                        engine.score_candidate(c)
+                    engine.rank_candidates(candidates)
+                    st.session_state.scored = True
                 st.rerun()
 
         render_footer()
@@ -1253,15 +1322,28 @@ def page_dashboard():
     else:
         st.markdown(f"""
         <div class="glass-card" style="text-align:center;padding:2rem">
-            <div style="margin-bottom:0.8rem">{svg_icon("zap", 40, "#f59e0b")}</div>
-            <p style="font-weight:600;color:{_c("primary")};font-size:1rem;margin:0">
+            <div style="margin-bottom:0.8rem">{svg_icon("users", 40, "#0d9488")}</div>
+            <p style="font-weight:600;color:{_c("primary")};font-size:1.1rem;margin:0">
                 Загружено {len(candidates)} кандидатов
             </p>
-            <p style="color:{_c("secondary")};font-size:0.88rem;margin-top:0.3rem">
-                Перейдите в раздел "Настройки модели" для запуска оценки
+            <p style="color:{_c("secondary")};font-size:0.88rem;margin:0.3rem 0 1rem 0">
+                Данные готовы. Запустите скоринг для получения оценок.
             </p>
         </div>
         """, unsafe_allow_html=True)
+        col_l2, col_c2, col_r2 = st.columns([1, 2, 1])
+        with col_c2:
+            if st.button("Запустить скоринг", type="primary", use_container_width=True, key="dashboard_run_scoring"):
+                config = st.session_state.get("scoring_config", ScoringConfig())
+                engine = ScoringEngine(config)
+                progress = st.progress(0, text="Оценка кандидатов...")
+                for i, c in enumerate(candidates):
+                    engine.score_candidate(c)
+                    progress.progress((i + 1) / len(candidates), text=f"Оценка: {c.full_name}...")
+                engine.rank_candidates(candidates)
+                st.session_state.scored = True
+                progress.empty()
+                st.rerun()
 
     render_footer()
 
@@ -1337,9 +1419,111 @@ def page_upload():
             st.rerun()
 
     if st.session_state.get("candidates"):
+        cands = st.session_state.candidates
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-        st.markdown(f'<p style="font-weight:600;color:{_c("primary")}">Предпросмотр данных ({len(st.session_state.candidates)} кандидатов)</p>', unsafe_allow_html=True)
-        df = candidates_to_dataframe(st.session_state.candidates)
+        st.markdown(f'<p style="font-weight:700;font-size:1.1rem;color:{_c("heading")}">Предпросмотр данных ({len(cands)} кандидатов)</p>', unsafe_allow_html=True)
+
+        # Key statistics cards
+        avg_gpa = sum(c.gpa for c in cands) / max(len(cands), 1)
+        unique_cities = len(set(c.city for c in cands))
+        avg_age = sum(c.age for c in cands) / max(len(cands), 1)
+        avg_skills = sum(len(c.skills) for c in cands) / max(len(cands), 1)
+
+        stat_cols = st.columns(4)
+        stat_items = [
+            (svg_icon("users", 24, "#0d9488"), str(len(cands)), "Всего кандидатов"),
+            (svg_icon("bar-chart", 24, "#3b82f6"), f"{avg_gpa:.2f}", "Средний GPA"),
+            (svg_icon("activity", 24, "#8b5cf6"), str(unique_cities), "Городов"),
+            (svg_icon("star", 24, "#f59e0b"), f"{avg_skills:.1f}", "Ср. навыков"),
+        ]
+        for i, (icon_h, val, lbl) in enumerate(stat_items):
+            with stat_cols[i]:
+                st.markdown(f"""
+                <div class="metric-card-v2" style="animation-delay:{i*0.1}s">
+                    <div class="metric-icon">{icon_h}</div>
+                    <div class="metric-value" style="font-size:1.6rem">{val}</div>
+                    <div class="metric-label">{lbl}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("")
+
+        dark = _is_dark()
+
+        # Charts row: Education distribution + City distribution + GPA histogram
+        chart_col1, chart_col2, chart_col3 = st.columns(3)
+
+        with chart_col1:
+            edu_labels_map = {"school": "Школа", "bachelor": "Бакалавр", "master": "Магистр", "phd": "PhD", "other": "Другое"}
+            edu_counts = {}
+            for c in cands:
+                lbl = edu_labels_map.get(c.education_level, c.education_level)
+                edu_counts[lbl] = edu_counts.get(lbl, 0) + 1
+            fig_edu_pie = go.Figure(data=[go.Pie(
+                labels=list(edu_counts.keys()),
+                values=list(edu_counts.values()),
+                hole=0.4,
+                marker=dict(colors=CHART_COLORS[:len(edu_counts)]),
+                textfont=dict(size=11),
+            )])
+            fig_edu_pie.update_layout(
+                **_plotly_defaults(dark),
+                height=280,
+                title=dict(text="Образование", font=dict(size=12)),
+                showlegend=True,
+                legend=dict(font=dict(size=10)),
+                margin=dict(t=50, b=20, l=20, r=20),
+            )
+            st.plotly_chart(fig_edu_pie, use_container_width=True)
+
+        with chart_col2:
+            city_counts = {}
+            for c in cands:
+                city_counts[c.city] = city_counts.get(c.city, 0) + 1
+            sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+            fig_city_bar = go.Figure(data=[go.Bar(
+                x=[ct[1] for ct in sorted_cities],
+                y=[ct[0] for ct in sorted_cities],
+                orientation="h",
+                marker=dict(color="#0d9488", cornerradius=4),
+                text=[str(ct[1]) for ct in sorted_cities],
+                textposition="auto",
+                textfont=dict(size=10, color="white"),
+            )])
+            fig_city_bar.update_layout(
+                **_plotly_no_margin(dark),
+                height=280,
+                title=dict(text="Города (топ-10)", font=dict(size=12)),
+                yaxis=dict(autorange="reversed"),
+                margin=dict(l=100, r=20, t=50, b=20),
+                showlegend=False,
+            )
+            st.plotly_chart(fig_city_bar, use_container_width=True)
+
+        with chart_col3:
+            gpa_vals = [c.gpa for c in cands]
+            fig_gpa = go.Figure(data=[go.Histogram(
+                x=gpa_vals,
+                nbinsx=15,
+                marker=dict(color="#3b82f6", line=dict(color="rgba(255,255,255,0.2)", width=1)),
+                opacity=0.85,
+            )])
+            fig_gpa.update_layout(
+                **_plotly_defaults(dark),
+                height=280,
+                title=dict(text="Распределение GPA", font=dict(size=12)),
+                xaxis=dict(title="GPA", gridcolor="rgba(148,163,184,0.1)"),
+                yaxis=dict(title="Кол-во", gridcolor="rgba(148,163,184,0.1)"),
+                margin=dict(t=50, b=40, l=50, r=20),
+                showlegend=False,
+            )
+            st.plotly_chart(fig_gpa, use_container_width=True)
+
+        st.markdown("")
+
+        # Data table
+        st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-bottom:0.5rem">Таблица данных</p>', unsafe_allow_html=True)
+        df = candidates_to_dataframe(cands)
         st.dataframe(
             df[["Имя", "Возраст", "Город", "Образование", "GPA", "Навыки"]],
             use_container_width=True,
@@ -2554,6 +2738,145 @@ def page_analytics():
     col3.metric("Ст. отклонение", f"{score_std:.1f}")
 
     # ===================================================================
+    # ERROR ANALYSIS
+    # ===================================================================
+    st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
+    st.markdown(f'<p style="font-weight:700;font-size:1.15rem;color:{_c("heading")}">Анализ ошибок</p>', unsafe_allow_html=True)
+    st.caption("Выявление потенциальных проблем модели: расхождения между GPA и общей оценкой, аномальные профили.")
+
+    # Residual analysis: predicted total score vs GPA-based expectation
+    gpa_scores_all = np.array([c.gpa for c in candidates])
+    total_scores_all = np.array([c.total_score for c in candidates])
+    gpa_normalized = (gpa_scores_all - 2.0) / 2.0 * 100  # normalize GPA to 0-100 scale
+    residuals = total_scores_all - gpa_normalized
+
+    col_err1, col_err2 = st.columns(2)
+
+    with col_err1:
+        # Scatter: GPA vs Total Score with outlier highlighting
+        fig_err_scatter = go.Figure()
+        residual_abs = np.abs(residuals)
+        outlier_threshold = np.mean(residual_abs) + 2 * np.std(residual_abs)
+        is_outlier = residual_abs > outlier_threshold
+        normal_mask = ~is_outlier
+
+        fig_err_scatter.add_trace(go.Scatter(
+            x=gpa_scores_all[normal_mask].tolist(),
+            y=total_scores_all[normal_mask].tolist(),
+            mode="markers",
+            marker=dict(color="#0d9488", size=6, opacity=0.7),
+            name="Стандартные",
+        ))
+        if np.any(is_outlier):
+            outlier_names = [candidates[i].full_name for i in range(len(candidates)) if is_outlier[i]]
+            fig_err_scatter.add_trace(go.Scatter(
+                x=gpa_scores_all[is_outlier].tolist(),
+                y=total_scores_all[is_outlier].tolist(),
+                mode="markers+text",
+                marker=dict(color="#ef4444", size=9, symbol="diamond"),
+                text=outlier_names,
+                textposition="top center",
+                textfont=dict(size=9),
+                name="Аномалии",
+            ))
+        fig_err_scatter.update_layout(
+            **_plotly_defaults(dark),
+            height=350,
+            title=dict(text="GPA vs Общий балл (аномалии)", font=dict(size=13)),
+            xaxis=dict(title="GPA", gridcolor="rgba(148,163,184,0.1)"),
+            yaxis=dict(title="Общий балл", gridcolor="rgba(148,163,184,0.1)"),
+            legend=dict(orientation="h", y=-0.18),
+        )
+        st.plotly_chart(fig_err_scatter, use_container_width=True)
+
+    with col_err2:
+        # Residual distribution
+        fig_resid = go.Figure()
+        fig_resid.add_trace(go.Histogram(
+            x=residuals.tolist(),
+            nbinsx=20,
+            marker=dict(color="#8b5cf6", line=dict(color="rgba(255,255,255,0.2)", width=1)),
+            opacity=0.8,
+            name="Остатки",
+        ))
+        fig_resid.add_vline(x=0, line_dash="dash", line_color="#f59e0b",
+                           annotation_text="Нулевое отклонение", annotation_font_color="#f59e0b")
+        fig_resid.update_layout(
+            **_plotly_defaults(dark),
+            height=350,
+            title=dict(text="Распределение остатков (балл - GPA-ожидание)", font=dict(size=13)),
+            xaxis=dict(title="Остаток", gridcolor="rgba(148,163,184,0.1)"),
+            yaxis=dict(title="Кол-во", gridcolor="rgba(148,163,184,0.1)"),
+            showlegend=False,
+        )
+        st.plotly_chart(fig_resid, use_container_width=True)
+
+    # Error summary metrics
+    mae = np.mean(np.abs(residuals))
+    rmse = np.sqrt(np.mean(residuals**2))
+    outlier_count = int(np.sum(is_outlier))
+
+    err_cols = st.columns(4)
+    err_cols[0].metric("MAE (GPA vs балл)", f"{mae:.1f}")
+    err_cols[1].metric("RMSE", f"{rmse:.1f}")
+    err_cols[2].metric("Аномалий обнаружено", str(outlier_count))
+    err_cols[3].metric("Доля аномалий", f"{outlier_count / max(len(candidates),1):.1%}")
+
+    # Detailed error cases table
+    if outlier_count > 0:
+        st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:0.5rem">Аномальные профили</p>', unsafe_allow_html=True)
+        st.caption("Кандидаты с наибольшим расхождением между GPA-ожиданием и общей оценкой модели.")
+        err_rows_html = ""
+        outlier_indices = np.where(is_outlier)[0]
+        for idx in outlier_indices:
+            c = candidates[idx]
+            res = residuals[idx]
+            direction = "Балл выше GPA-ожидания" if res > 0 else "Балл ниже GPA-ожидания"
+            dir_color = "#22c55e" if res > 0 else "#ef4444"
+            err_rows_html += f"""<tr>
+                <td style="font-weight:600">{c.full_name}</td>
+                <td>{c.gpa:.2f}</td>
+                <td>{c.total_score:.1f}</td>
+                <td style="color:{dir_color};font-weight:700">{res:+.1f}</td>
+                <td style="font-size:0.82rem;color:{_c("secondary")}">{direction}</td>
+            </tr>"""
+        st.markdown(f"""
+        <table class="styled-table">
+            <thead><tr><th>Кандидат</th><th>GPA</th><th>Балл</th><th>Остаток</th><th>Описание</th></tr></thead>
+            <tbody>{err_rows_html}</tbody>
+        </table>
+        """, unsafe_allow_html=True)
+
+    # Dimension-level error: which dimensions deviate most
+    st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Разброс по измерениям (внутренняя согласованность)</p>', unsafe_allow_html=True)
+    st.caption("Большой разброс баллов по измерениям у одного кандидата может указывать на несбалансированный профиль.")
+
+    candidate_spreads = []
+    for c in candidates:
+        dim_scores_c = [b["score"] for b in c.score_breakdown]
+        if dim_scores_c:
+            spread = max(dim_scores_c) - min(dim_scores_c)
+            candidate_spreads.append(spread)
+        else:
+            candidate_spreads.append(0)
+
+    fig_spread = go.Figure(data=[go.Histogram(
+        x=candidate_spreads,
+        nbinsx=20,
+        marker=dict(color="#f59e0b", line=dict(color="rgba(255,255,255,0.2)", width=1)),
+        opacity=0.8,
+    )])
+    fig_spread.update_layout(
+        **_plotly_defaults(dark),
+        height=280,
+        title=dict(text="Внутренний разброс баллов (макс - мин по измерениям)", font=dict(size=13)),
+        xaxis=dict(title="Разброс", gridcolor="rgba(148,163,184,0.1)"),
+        yaxis=dict(title="Кол-во кандидатов", gridcolor="rgba(148,163,184,0.1)"),
+        showlegend=False,
+    )
+    st.plotly_chart(fig_spread, use_container_width=True)
+
+    # ===================================================================
     # FAIRNESS ANALYSIS (expanded)
     # ===================================================================
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
@@ -3009,14 +3332,14 @@ def main():
         )
 
         nav_descriptions = {
-            "Главная": "Обзор и ключевые метрики",
-            "Загрузка данных": "Импорт или генерация данных",
-            "Рейтинг кандидатов": "Таблица с баллами",
-            "Профиль кандидата": "Детали и объяснения",
-            "Сравнение": "Сравнение двух кандидатов",
-            "Шорт-лист": "Финальный список",
-            "Аналитика": "Графики и статистика",
-            "Настройки модели": "Веса и запуск оценки",
+            "Главная": "Обзор проекта, ключевые метрики и топ-5",
+            "Загрузка данных": "Импорт CSV/JSON или генерация демо-данных",
+            "Рейтинг кандидатов": "Полная таблица с баллами, фильтрами и экспортом",
+            "Профиль кандидата": "Детальный профиль, эссе, обоснования и корректировка",
+            "Сравнение": "Наложение радаров и сравнение 2-4 кандидатов",
+            "Шорт-лист": "Формирование финального списка с AI-фильтрацией",
+            "Аналитика": "Валидация модели, fairness, baseline-сравнение",
+            "Настройки модели": "Веса критериев, приватность и запуск оценки",
         }
         st.caption(nav_descriptions.get(page, ""))
 
