@@ -1043,7 +1043,7 @@ def init_session_state():
 def render_header():
     st.markdown("""
     <div class="main-header">
-        <h1>inVision U  --  Система отбора кандидатов</h1>
+        <h1>inVision U | Система отбора кандидатов</h1>
         <p>Интеллектуальная платформа для приёмной комиссии с объяснимым скорингом</p>
     </div>
     <div class="header-border-glow"></div>
@@ -1062,7 +1062,7 @@ def render_skeleton(lines=4):
 
 def render_footer():
     st.markdown(
-        '<div class="app-footer">Powered by ML  |  Decentrathon 5.0</div>',
+        '<div class="app-footer">Decentrathon 5.0 | AI inDrive Track</div>',
         unsafe_allow_html=True,
     )
 
@@ -1147,13 +1147,64 @@ def render_metrics_row(candidates):
 
 def page_dashboard():
     if not st.session_state.get("candidates"):
-        st.markdown("""
-        <div class="glass-card" style="text-align:center; padding:3rem">
-            <div style="margin-bottom:1rem">""" + svg_icon("upload", 48, "#94a3b8") + """</div>
-            <h3 class="text-heading" style="margin:0">Добро пожаловать в inVision U</h3>
-            <p class="text-secondary" style="margin-top:0.5rem">Загрузите данные кандидатов или создайте демо-набор для начала работы</p>
+        # Welcome hero block
+        st.markdown(f"""
+        <div class="glass-card" style="text-align:center; padding:2.5rem 2rem">
+            <div style="margin-bottom:1rem">{svg_icon("award", 56, "#0d9488")}</div>
+            <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.6rem">Добро пожаловать в inVision U</h2>
+            <p style="color:{_c("secondary")};margin-top:0.6rem;font-size:1rem;max-width:600px;margin-left:auto;margin-right:auto">
+                Интеллектуальная платформа для отбора кандидатов с объяснимым скорингом, NLP-анализом эссе и проверкой на ИИ-генерацию
+            </p>
         </div>
         """, unsafe_allow_html=True)
+
+        st.markdown("")
+
+        # Quick-start steps
+        st.markdown(f"""
+        <div class="glass-card" style="padding:1.5rem 2rem">
+            <p style="font-weight:700;font-size:1.1rem;color:{_c("heading")};margin:0 0 1rem 0">Быстрый старт</p>
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.15)">
+                    <div style="font-size:1.8rem;font-weight:800;color:#0d9488;margin-bottom:0.3rem">1</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Загрузите данные</p>
+                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Импорт CSV/JSON или демо-набор</p>
+                </div>
+                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15)">
+                    <div style="font-size:1.8rem;font-weight:800;color:#3b82f6;margin-bottom:0.3rem">2</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Настройте веса</p>
+                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Настройки модели скоринга</p>
+                </div>
+                <div style="flex:1;min-width:180px;text-align:center;padding:1rem;border-radius:12px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15)">
+                    <div style="font-size:1.8rem;font-weight:800;color:#8b5cf6;margin-bottom:0.3rem">3</div>
+                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.9rem">Анализируйте</p>
+                    <p style="color:{_c("secondary")};font-size:0.78rem;margin-top:0.2rem">Рейтинг, профили, аналитика</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("")
+
+        # Prominent demo button on main page
+        col_l, col_center, col_r = st.columns([1, 2, 1])
+        with col_center:
+            st.markdown(f"""
+            <div class="glass-card" style="text-align:center;padding:1.5rem;border:2px solid rgba(13,148,136,0.3)">
+                <div style="margin-bottom:0.6rem">{svg_icon("zap", 36, "#0d9488")}</div>
+                <p style="font-weight:700;color:{_c("heading")};font-size:1.05rem;margin:0">Начните прямо сейчас</p>
+                <p style="color:{_c("secondary")};font-size:0.85rem;margin:0.3rem 0 1rem 0">Загрузите демо-набор из 55 кандидатов для знакомства с платформой</p>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("Загрузить демо-данные", type="primary", use_container_width=True, key="main_demo_btn"):
+                with st.spinner("Генерация данных..."):
+                    raw = generate_dataset(55, 42)
+                    candidates = [dict_to_candidate(r) for r in raw]
+                    st.session_state.candidates = candidates
+                    st.session_state.scored = False
+                    save_dataset(raw)
+                st.rerun()
+
         render_footer()
         return
 
@@ -2854,11 +2905,11 @@ def page_settings():
         <div class="glass-card" style="margin-bottom:1rem">
             <p style="font-weight:700;color:{_c("heading")};font-size:1.05rem;margin:0 0 0.8rem 0">Приватность и безопасность данных</p>
             <div style="color:{_c("card_text")};font-size:0.88rem;line-height:1.8">
-                <p style="margin:0 0 0.4rem 0">-- Все данные обрабатываются локально на вашем устройстве.</p>
-                <p style="margin:0 0 0.4rem 0">-- Внешние API-вызовы не выполняются. Модель работает полностью автономно.</p>
-                <p style="margin:0 0 0.4rem 0">-- Данные сессии не сохраняются на диск без явного запроса пользователя.</p>
-                <p style="margin:0 0 0.4rem 0">-- Экспорт данных возможен только по инициативе пользователя.</p>
-                <p style="margin:0 0 0.4rem 0">-- Персональные данные кандидатов не передаются третьим сторонам.</p>
+                <p style="margin:0 0 0.4rem 0">- Все данные обрабатываются локально на вашем устройстве.</p>
+                <p style="margin:0 0 0.4rem 0">- Внешние API-вызовы не выполняются. Модель работает полностью автономно.</p>
+                <p style="margin:0 0 0.4rem 0">- Данные сессии не сохраняются на диск без явного запроса пользователя.</p>
+                <p style="margin:0 0 0.4rem 0">- Экспорт данных возможен только по инициативе пользователя.</p>
+                <p style="margin:0 0 0.4rem 0">- Персональные данные кандидатов не передаются третьим сторонам.</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2877,16 +2928,16 @@ def page_settings():
         <div class="glass-card" style="margin-top:1rem">
             <p style="font-weight:600;color:{_c("primary")};margin:0 0 0.6rem 0">Ограничения модели</p>
             <div style="color:{_c("card_text")};font-size:0.85rem;line-height:1.8">
-                <p style="margin:0 0 0.3rem 0">-- Детекция ИИ-генерации использует эвристический подход и не гарантирует 100% точности.</p>
-                <p style="margin:0 0 0.3rem 0">-- Списки ключевых слов для NLP-анализа ограничены и могут не покрывать все варианты выражения мотивации/лидерства.</p>
-                <p style="margin:0 0 0.3rem 0">-- GPA нормализуется в диапазоне 2.0-4.0; иные шкалы требуют предварительной конвертации.</p>
-                <p style="margin:0 0 0.3rem 0">-- Система оптимизирована для русскоязычных текстов; поддержка других языков ограничена.</p>
-                <p style="margin:0 0 0.3rem 0">-- Оценка навыков основана на текстовом совпадении; контекст применения навыков не анализируется.</p>
-                <p style="margin:0 0 0.3rem 0">-- Веса критериев настраиваются экспертом, а не обучаются на данных.</p>
-                <p style="margin:0 0 0.3rem 0">-- Модель не учитывает невербальную коммуникацию (интервью, видео).</p>
-                <p style="margin:0 0 0.3rem 0">-- Рекомендательные письма учитываются количественно, но не анализируются содержательно.</p>
-                <p style="margin:0 0 0.3rem 0">-- При малом объёме данных (<20 кандидатов) статистические выводы ненадёжны.</p>
-                <p style="margin:0 0 0.3rem 0">-- Синтетические демо-данные не отражают реальное распределение качеств кандидатов.</p>
+                <p style="margin:0 0 0.3rem 0">- Детекция ИИ-генерации использует эвристический подход и не гарантирует 100% точности.</p>
+                <p style="margin:0 0 0.3rem 0">- Списки ключевых слов для NLP-анализа ограничены и могут не покрывать все варианты выражения мотивации/лидерства.</p>
+                <p style="margin:0 0 0.3rem 0">- GPA нормализуется в диапазоне 2.0-4.0; иные шкалы требуют предварительной конвертации.</p>
+                <p style="margin:0 0 0.3rem 0">- Система оптимизирована для русскоязычных текстов; поддержка других языков ограничена.</p>
+                <p style="margin:0 0 0.3rem 0">- Оценка навыков основана на текстовом совпадении; контекст применения навыков не анализируется.</p>
+                <p style="margin:0 0 0.3rem 0">- Веса критериев настраиваются экспертом, а не обучаются на данных.</p>
+                <p style="margin:0 0 0.3rem 0">- Модель не учитывает невербальную коммуникацию (интервью, видео).</p>
+                <p style="margin:0 0 0.3rem 0">- Рекомендательные письма учитываются количественно, но не анализируются содержательно.</p>
+                <p style="margin:0 0 0.3rem 0">- При малом объёме данных (<20 кандидатов) статистические выводы ненадёжны.</p>
+                <p style="margin:0 0 0.3rem 0">- Синтетические демо-данные не отражают реальное распределение качеств кандидатов.</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2900,7 +2951,7 @@ def page_settings():
 
 def main():
     st.set_page_config(
-        page_title="inVision U -- Система отбора",
+        page_title="inVision U | Система отбора",
         page_icon=None,
         layout="wide",
         initial_sidebar_state="expanded",
@@ -2934,20 +2985,40 @@ def main():
 
         st.markdown("---")
 
+        st.markdown(f"""
+        <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:600;margin-bottom:0.3rem;padding-left:0.2rem">
+            Навигация
+        </p>
+        """, unsafe_allow_html=True)
+
+        nav_options = [
+            "Главная",
+            "Загрузка данных",
+            "Рейтинг кандидатов",
+            "Профиль кандидата",
+            "Сравнение",
+            "Шорт-лист",
+            "Аналитика",
+            "Настройки модели",
+        ]
+
         page = st.radio(
             "Навигация",
-            [
-                "Главная",
-                "Загрузка данных",
-                "Рейтинг кандидатов",
-                "Профиль кандидата",
-                "Сравнение",
-                "Шорт-лист",
-                "Аналитика",
-                "Настройки модели",
-            ],
+            nav_options,
             label_visibility="collapsed",
         )
+
+        nav_descriptions = {
+            "Главная": "Обзор и ключевые метрики",
+            "Загрузка данных": "Импорт или генерация данных",
+            "Рейтинг кандидатов": "Таблица с баллами",
+            "Профиль кандидата": "Детали и объяснения",
+            "Сравнение": "Сравнение двух кандидатов",
+            "Шорт-лист": "Финальный список",
+            "Аналитика": "Графики и статистика",
+            "Настройки модели": "Веса и запуск оценки",
+        }
+        st.caption(nav_descriptions.get(page, ""))
 
         st.markdown("---")
 
