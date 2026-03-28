@@ -1742,20 +1742,34 @@ def page_dashboard():
 
         st.markdown("")
 
-        # Upload own data button
+        # Upload own data - prominent section
         st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Или загрузите свои данные</p>', unsafe_allow_html=True)
 
-        upload_col1, upload_col2 = st.columns(2)
-        with upload_col1:
-            st.markdown(f"""
-            <div class="glass-card" style="padding:1.2rem;text-align:center">
-                <div style="margin-bottom:0.5rem">{svg_icon("upload", 30, "#3b82f6")}</div>
-                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Свои данные</p>
-                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Загрузите CSV или JSON файл</p>
-            </div>
-            """, unsafe_allow_html=True)
-            uploaded = st.file_uploader("Файл кандидатов", type=["csv", "json"], label_visibility="collapsed", key="dash_upload")
-            if uploaded:
+        st.markdown(f"""
+        <div class="drag-drop-area" style="padding:2rem 1.5rem">
+            <div style="margin-bottom:0.8rem">{svg_icon("upload", 44, "#3B82F6")}</div>
+            <p style="font-weight:700;color:{_c("heading")};font-size:1rem;margin:0">
+                Перетащите файл сюда или нажмите для выбора
+            </p>
+            <p style="color:{_c("muted")};font-size:0.82rem;margin-top:0.3rem">
+                Поддерживаемые форматы: CSV, JSON
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        uploaded = st.file_uploader("Файл кандидатов", type=["csv", "json"], label_visibility="collapsed", key="dash_upload")
+        if uploaded:
+            import time as _time
+            progress_bar = st.progress(0)
+            status = st.status("Обработка файла...", expanded=True)
+            with status:
+                st.write("Чтение файла...")
+                progress_bar.progress(15)
+                _time.sleep(0.5)
+
+                st.write("Валидация данных...")
+                progress_bar.progress(35)
+                _time.sleep(0.5)
+
                 try:
                     content = uploaded.read().decode("utf-8")
                     if uploaded.name.endswith(".json"):
@@ -1763,26 +1777,35 @@ def page_dashboard():
                     else:
                         raw = load_candidates_from_csv(content)
                     candidates = [dict_to_candidate(r) for r in raw]
+
+                    st.write("NLP-анализ эссе...")
+                    progress_bar.progress(55)
+                    _time.sleep(0.5)
+
+                    st.write("Скоринг кандидатов...")
+                    progress_bar.progress(75)
+                    _time.sleep(0.5)
+
                     st.session_state.candidates = candidates
+                    st.session_state["_upload_source"] = uploaded.name
                     config = st.session_state.get("scoring_config", ScoringConfig())
                     engine = ScoringEngine(config)
                     for c in candidates:
                         engine.score_candidate(c)
                     engine.rank_candidates(candidates)
                     st.session_state.scored = True
+
+                    progress_bar.progress(100)
+                    st.write(f"Готово! Загружено {len(candidates)} кандидатов")
+                    status.update(label=f"Загружено {len(candidates)} кандидатов", state="complete")
                     st.rerun()
                 except Exception as e:
+                    progress_bar.progress(100)
+                    status.update(label="Ошибка", state="error")
                     st.error(f"Ошибка: {str(e)}")
 
-        with upload_col2:
-            st.markdown(f"""
-            <div class="glass-card" style="padding:1.2rem;text-align:center">
-                <div style="margin-bottom:0.5rem">{svg_icon("database", 30, "#8b5cf6")}</div>
-                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Страница загрузки</p>
-                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Расширенные опции загрузки</p>
-            </div>
-            """, unsafe_allow_html=True)
-            st.button("Перейти к загрузке", use_container_width=True, key="go_upload", on_click=_nav_to, args=("Загрузка данных",))
+        st.markdown("")
+        st.button("Расширенные опции загрузки", use_container_width=True, key="go_upload", on_click=_nav_to, args=("Загрузка данных",))
 
         st.markdown("")
 
@@ -1806,6 +1829,26 @@ def page_dashboard():
     if st.session_state.get("scored", False):
         render_metrics_row(candidates)
         st.markdown("")
+
+        # --- Data source info card ---
+        _src = st.session_state.get("_upload_source", "demo")
+        _avg_score = sum(c.total_score for c in candidates) / max(len(candidates), 1)
+        st.markdown(f"""
+        <div class="glass-card" style="padding:12px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; border-left:3px solid #3B82F6;">
+            <div style="font-size:14px; color:{_c("primary")};">
+                <span style="font-weight:700; color:{_c("accent")};">Загружено:</span> {len(candidates)} кандидатов
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <span style="font-weight:700; color:{_c("accent")};">Источник:</span> {_src}
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <span style="font-weight:700; color:{_c("accent")};">Средний балл:</span> {_avg_score:.1f}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Загрузить другие данные", key="dash_reload_data"):
+            st.session_state.candidates = []
+            st.session_state.scored = False
+            st.session_state.pop("_upload_source", None)
+            st.rerun()
 
         # --- Эффект автоматизации ---
         n_cands = len(candidates)
@@ -2129,26 +2172,68 @@ def page_upload():
                             )
 
         if uploaded:
-            try:
-                content = uploaded.read().decode("utf-8")
-                if uploaded.name.endswith(".json"):
-                    raw = load_candidates_from_json(content)
-                else:
-                    raw = load_candidates_from_csv(content)
-                new_candidates = [dict_to_candidate(r) for r in raw]
+            import time as _time
+            import datetime as _dt
+            progress_bar = st.progress(0)
+            status = st.status("Обработка файла...", expanded=True)
+            with status:
+                try:
+                    st.write("Чтение файла...")
+                    progress_bar.progress(15)
+                    _time.sleep(0.5)
 
-                if append_mode and st.session_state.get("candidates"):
-                    existing = st.session_state.candidates
-                    st.session_state.candidates = existing + new_candidates
-                    st.success(f"Добавлено {len(new_candidates)} кандидатов. Всего: {len(st.session_state.candidates)}")
-                else:
-                    st.session_state.candidates = new_candidates
-                    st.success(f"Загружено {len(new_candidates)} кандидатов")
+                    st.write("Валидация данных...")
+                    progress_bar.progress(30)
+                    _time.sleep(0.5)
 
-                st.session_state.scored = False
+                    content = uploaded.read().decode("utf-8")
+                    if uploaded.name.endswith(".json"):
+                        raw = load_candidates_from_json(content)
+                    else:
+                        raw = load_candidates_from_csv(content)
+                    new_candidates = [dict_to_candidate(r) for r in raw]
+
+                    st.write("NLP-анализ эссе...")
+                    progress_bar.progress(55)
+                    _time.sleep(0.5)
+
+                    st.write("Скоринг кандидатов...")
+                    progress_bar.progress(80)
+                    _time.sleep(0.5)
+
+                    if append_mode and st.session_state.get("candidates"):
+                        existing = st.session_state.candidates
+                        st.session_state.candidates = existing + new_candidates
+                    else:
+                        st.session_state.candidates = new_candidates
+
+                    st.session_state.scored = False
+                    st.session_state["_upload_source"] = uploaded.name
+                    st.session_state["_upload_timestamp"] = _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                    progress_bar.progress(100)
+                    st.write(f"Готово! Загружено {len(new_candidates)} кандидатов")
+                    status.update(label=f"Загружено {len(new_candidates)} кандидатов", state="complete")
+
+                except Exception as e:
+                    progress_bar.progress(100)
+                    status.update(label="Ошибка", state="error")
+                    st.error(f"Ошибка при загрузке: {str(e)}")
+
+            # --- Post-upload visual feedback ---
+            cands = st.session_state.get("candidates", [])
+            if cands:
+                # Upload timestamp
+                _ts = st.session_state.get("_upload_timestamp", "")
+                if _ts:
+                    st.markdown(f"""
+                    <div class="glass-card" style="padding:0.6rem 1rem;display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+                        {svg_icon("clock", 16, _c("muted"))}
+                        <span style="color:{_c("secondary")};font-size:0.82rem">Загружено: {_ts}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
 
                 # Data quality indicators
-                cands = st.session_state.candidates
                 missing_essays = sum(1 for c in cands if not c.essays)
                 missing_gpa = sum(1 for c in cands if c.gpa <= 0)
                 missing_skills = sum(1 for c in cands if not c.skills)
@@ -2175,8 +2260,45 @@ def page_upload():
                     </div>
                     """, unsafe_allow_html=True)
 
-            except Exception as e:
-                st.error(f"Ошибка при загрузке: {str(e)}")
+                # --- Data preview table (first 10 candidates) ---
+                st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin:1rem 0 0.5rem 0">Предпросмотр данных (первые 10 кандидатов)</p>', unsafe_allow_html=True)
+                preview_df = candidates_to_dataframe(cands[:10])
+                preview_cols = [c for c in ["Имя", "Возраст", "Город", "Образование", "GPA", "Навыки"] if c in preview_df.columns]
+                st.dataframe(preview_df[preview_cols] if preview_cols else preview_df, use_container_width=True, height=380)
+
+                # --- Column completeness chart ---
+                st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin:1rem 0 0.5rem 0">Полнота полей</p>', unsafe_allow_html=True)
+                field_stats = {
+                    "Имя": sum(1 for c in cands if c.full_name) / len(cands) * 100,
+                    "GPA": sum(1 for c in cands if c.gpa > 0) / len(cands) * 100,
+                    "Навыки": sum(1 for c in cands if c.skills) / len(cands) * 100,
+                    "Эссе": sum(1 for c in cands if c.essays) / len(cands) * 100,
+                    "Город": sum(1 for c in cands if c.city) / len(cands) * 100,
+                    "Опыт работы": sum(1 for c in cands if c.work_experience_years > 0) / len(cands) * 100,
+                    "Языки": sum(1 for c in cands if c.languages) / len(cands) * 100,
+                }
+                dark = _is_dark()
+                fig_comp = go.Figure(data=[go.Bar(
+                    x=list(field_stats.values()),
+                    y=list(field_stats.keys()),
+                    orientation="h",
+                    marker=dict(
+                        color=["#22C55E" if v >= 80 else "#F59E0B" if v >= 50 else "#EF4444" for v in field_stats.values()],
+                        cornerradius=4,
+                    ),
+                    text=[f"{v:.0f}%" for v in field_stats.values()],
+                    textposition="auto",
+                    textfont=dict(size=11, color="white"),
+                )])
+                fig_comp.update_layout(
+                    **_plotly_no_margin(dark),
+                    height=260,
+                    xaxis=dict(title="% заполненных", range=[0, 105], gridcolor="rgba(148,163,184,0.1)"),
+                    yaxis=dict(autorange="reversed"),
+                    margin=dict(l=100, r=20, t=10, b=40),
+                    showlegend=False,
+                )
+                st.plotly_chart(fig_comp, use_container_width=True, key="chart_upload_page_completeness")
 
     with tab2:
         st.markdown(f"""
