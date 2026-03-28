@@ -1,4 +1,5 @@
 import json
+import random
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -391,6 +392,51 @@ def _css_shared():
         }
         div[data-testid="stSidebar"] [role="radio"]:hover {
             background: rgba(13,148,136,0.1) !important;
+        }
+
+        /* ===== Sidebar nav buttons ===== */
+        .nav-btn-container .stButton > button {
+            background: transparent !important;
+            border: none !important;
+            border-left: 3px solid transparent !important;
+            border-radius: 0 8px 8px 0 !important;
+            text-align: left !important;
+            padding: 0.55rem 0.9rem !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #94a3b8 !important;
+            width: 100% !important;
+            transition: all 0.2s ease !important;
+            box-shadow: none !important;
+        }
+        .nav-btn-container .stButton > button:hover {
+            background: rgba(13,148,136,0.08) !important;
+            color: #0d9488 !important;
+            border-left-color: rgba(13,148,136,0.4) !important;
+        }
+        .nav-btn-active .stButton > button {
+            background: rgba(13,148,136,0.15) !important;
+            color: #5eead4 !important;
+            border-left-color: #0d9488 !important;
+            font-weight: 600 !important;
+        }
+
+        /* ===== Action cards on dashboard ===== */
+        .action-card {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* ===== Demo option cards ===== */
+        .demo-card {
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .demo-card:hover {
+            transform: translateY(-4px);
         }
 
         /* ===== Streamlit elements override ===== */
@@ -811,6 +857,151 @@ def _css_dark():
         .text-secondary { color: #94a3b8 !important; }
         .text-accent { color: #0d9488 !important; }
         .text-heading { color: #e2e8f0 !important; }
+
+        /* ===== Force all text light in dark mode ===== */
+        .stApp, .stApp p, .stApp span, .stApp label, .stApp div, .stApp li, .stApp td, .stApp th {
+            color: #e2e8f0 !important;
+        }
+
+        /* Streamlit markdown elements */
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] span,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4 {
+            color: #e2e8f0 !important;
+        }
+
+        /* Expander headers */
+        [data-testid="stExpander"] summary span {
+            color: #e2e8f0 !important;
+        }
+
+        /* Selectbox, multiselect, text input labels */
+        [data-testid="stWidgetLabel"] label,
+        [data-testid="stWidgetLabel"] p {
+            color: #e2e8f0 !important;
+        }
+
+        /* Radio labels */
+        [data-testid="stRadio"] label {
+            color: #e2e8f0 !important;
+        }
+
+        /* Metric values and labels */
+        [data-testid="stMetricValue"] {
+            color: #e2e8f0 !important;
+        }
+        [data-testid="stMetricLabel"] {
+            color: #e2e8f0 !important;
+        }
+
+        /* Dataframe/table text */
+        [data-testid="stDataFrame"] {
+            color: #e2e8f0 !important;
+        }
+
+        /* Caption text */
+        [data-testid="stCaption"] {
+            color: #94a3b8 !important;
+        }
+
+        /* Toggle labels */
+        .stToggle label span {
+            color: #e2e8f0 !important;
+        }
+
+        /* Tabs labels */
+        .stTabs [data-baseweb="tab"] {
+            color: #e2e8f0 !important;
+        }
+
+        /* Info/Warning/Success/Error messages */
+        [data-testid="stAlert"] p,
+        [data-testid="stAlert"] span,
+        .stAlert p, .stAlert span {
+            color: #e2e8f0 !important;
+        }
+
+        /* Selectbox dropdown text and selected values */
+        [data-testid="stSelectbox"] div[data-baseweb="select"] span,
+        [data-testid="stSelectbox"] div[data-baseweb="select"] div,
+        [data-testid="stMultiSelect"] div[data-baseweb="select"] span,
+        [data-testid="stMultiSelect"] div[data-baseweb="select"] div {
+            color: #e2e8f0 !important;
+        }
+
+        /* ===== Style ALL Streamlit buttons in dark mode ===== */
+        .stButton > button {
+            background: linear-gradient(135deg, #0d9488, #3b82f6) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 8px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+        .stButton > button:hover {
+            filter: brightness(1.15) !important;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Download buttons */
+        .stDownloadButton > button {
+            background: linear-gradient(135deg, #0d9488, #3b82f6) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+        }
+
+        /* File uploader */
+        [data-testid="stFileUploader"] {
+            color: #e2e8f0 !important;
+        }
+        [data-testid="stFileUploader"] label {
+            color: #e2e8f0 !important;
+        }
+        [data-testid="stFileUploader"] small {
+            color: #94a3b8 !important;
+        }
+
+        /* ===== Sidebar text in dark mode ===== */
+        [data-testid="stSidebar"] * {
+            color: #e2e8f0 !important;
+        }
+        [data-testid="stSidebar"] .stButton > button {
+            color: white !important;
+        }
+
+        /* ===== Slider and input elements ===== */
+        [data-testid="stSlider"] label,
+        [data-testid="stSlider"] [data-testid="stTickBarMin"],
+        [data-testid="stSlider"] [data-testid="stTickBarMax"] {
+            color: #e2e8f0 !important;
+        }
+
+        /* Number input */
+        [data-testid="stNumberInput"] label {
+            color: #e2e8f0 !important;
+        }
+        [data-testid="stNumberInput"] input {
+            color: #e2e8f0 !important;
+            background: rgba(30,41,59,0.8) !important;
+        }
+
+        /* Text input */
+        [data-testid="stTextInput"] input {
+            color: #e2e8f0 !important;
+            background: rgba(30,41,59,0.8) !important;
+        }
+
+        /* Checkbox */
+        [data-testid="stCheckbox"] label {
+            color: #e2e8f0 !important;
+        }
     """
 
 
@@ -1130,6 +1321,139 @@ def _css_light():
         .text-secondary { color: #64748b !important; }
         .text-accent { color: #0d9488 !important; }
         .text-heading { color: #0f172a !important; }
+
+        /* ===== Force all text dark in light mode ===== */
+        .stApp, .stApp p, .stApp span, .stApp label, .stApp div, .stApp li, .stApp td, .stApp th {
+            color: #1e293b !important;
+        }
+
+        /* Streamlit markdown elements */
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] span,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4 {
+            color: #1e293b !important;
+        }
+
+        /* Expander headers */
+        [data-testid="stExpander"] summary span {
+            color: #1e293b !important;
+        }
+
+        /* Selectbox, multiselect, text input labels */
+        [data-testid="stWidgetLabel"] label,
+        [data-testid="stWidgetLabel"] p {
+            color: #1e293b !important;
+        }
+
+        /* Radio labels */
+        [data-testid="stRadio"] label {
+            color: #1e293b !important;
+        }
+
+        /* Metric values and labels */
+        [data-testid="stMetricValue"] {
+            color: #1e293b !important;
+        }
+        [data-testid="stMetricLabel"] {
+            color: #1e293b !important;
+        }
+
+        /* Dataframe/table text */
+        [data-testid="stDataFrame"] {
+            color: #1e293b !important;
+        }
+
+        /* Caption text */
+        [data-testid="stCaption"] {
+            color: #64748b !important;
+        }
+
+        /* Toggle labels */
+        .stToggle label span {
+            color: #1e293b !important;
+        }
+
+        /* Tabs labels */
+        .stTabs [data-baseweb="tab"] {
+            color: #1e293b !important;
+        }
+
+        /* File uploader */
+        [data-testid="stFileUploader"] {
+            color: #1e293b !important;
+        }
+        [data-testid="stFileUploader"] label {
+            color: #1e293b !important;
+        }
+        [data-testid="stFileUploader"] small {
+            color: #64748b !important;
+        }
+
+        /* Slider and input elements */
+        [data-testid="stSlider"] label,
+        [data-testid="stSlider"] [data-testid="stTickBarMin"],
+        [data-testid="stSlider"] [data-testid="stTickBarMax"] {
+            color: #1e293b !important;
+        }
+
+        /* Number input */
+        [data-testid="stNumberInput"] label {
+            color: #1e293b !important;
+        }
+        [data-testid="stNumberInput"] input {
+            color: #1e293b !important;
+        }
+
+        /* Text input */
+        [data-testid="stTextInput"] input {
+            color: #1e293b !important;
+        }
+
+        /* Checkbox */
+        [data-testid="stCheckbox"] label {
+            color: #1e293b !important;
+        }
+
+        /* Info/Warning/Success/Error messages */
+        [data-testid="stAlert"] p,
+        [data-testid="stAlert"] span,
+        .stAlert p, .stAlert span {
+            color: #1e293b !important;
+        }
+
+        /* Selectbox dropdown text and selected values */
+        [data-testid="stSelectbox"] div[data-baseweb="select"] span,
+        [data-testid="stSelectbox"] div[data-baseweb="select"] div,
+        [data-testid="stMultiSelect"] div[data-baseweb="select"] span,
+        [data-testid="stMultiSelect"] div[data-baseweb="select"] div {
+            color: #1e293b !important;
+        }
+
+        /* ===== Style buttons in light mode ===== */
+        .stButton > button {
+            background: linear-gradient(135deg, #0d9488, #3b82f6) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 8px 20px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+        .stButton > button:hover {
+            filter: brightness(1.1) !important;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.25) !important;
+            transform: translateY(-1px) !important;
+        }
+        .stDownloadButton > button {
+            background: linear-gradient(135deg, #0d9488, #3b82f6) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+        }
     """
 
 
@@ -1172,10 +1496,40 @@ def init_session_state():
         "shortlist_generated": False,
         "dark_mode": True,
         "anonymize_names": False,
+        "current_page": "Главная",
+        "demo_seed": None,
+        "demo_size": None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
+
+
+def _nav_to(page_name):
+    """Navigation callback to set current page."""
+    st.session_state["current_page"] = page_name
+
+
+def _render_breadcrumb(current_label):
+    """Render breadcrumb: Главная > Current Page. Главная is clickable."""
+    st.markdown("")
+    bc_cols = st.columns([6, 1])
+    with bc_cols[0]:
+        if current_label == "Главная":
+            st.markdown(
+                f'<p style="font-size:0.82rem;color:{_c("muted")};margin:0 0 0.8rem 0;font-weight:500">'
+                f'{svg_icon("home", 14, _c("muted"))} Главная</p>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                f'<p style="font-size:0.82rem;color:{_c("muted")};margin:0 0 0.2rem 0;font-weight:500">'
+                f'{svg_icon("home", 14, _c("accent"))} Главная  /  {current_label}</p>',
+                unsafe_allow_html=True,
+            )
+    if current_label != "Главная":
+        with bc_cols[0]:
+            st.button("Назад на главную", key=f"bc_back_{current_label}", on_click=_nav_to, args=("Главная",))
 
 
 # ---------------------------------------------------------------------------
@@ -1287,7 +1641,27 @@ def render_metrics_row(candidates):
 # Page 1: Dashboard
 # ---------------------------------------------------------------------------
 
+def _run_demo(size, seed=None):
+    """Generate demo data and score it. Uses a random seed if none provided."""
+    if seed is None:
+        seed = random.randint(1, 99999)
+    raw = generate_dataset(size, seed)
+    candidates = [dict_to_candidate(r) for r in raw]
+    st.session_state.candidates = candidates
+    st.session_state["demo_seed"] = seed
+    st.session_state["demo_size"] = size
+    save_dataset(raw)
+    config = st.session_state.get("scoring_config", ScoringConfig())
+    engine = ScoringEngine(config)
+    for c in candidates:
+        engine.score_candidate(c)
+    engine.rank_candidates(candidates)
+    st.session_state.scored = True
+
+
 def page_dashboard():
+    _render_breadcrumb("Главная")
+
     if not st.session_state.get("candidates"):
         # Hero with problem/solution
         st.markdown(f"""
@@ -1311,33 +1685,39 @@ def page_dashboard():
 
         st.markdown("")
 
-        # Action section - demo load with size choice + file upload
-        col_demo, col_upload = st.columns(2)
-        with col_demo:
-            st.markdown(f"""
-            <div class="glass-card" style="padding:1.2rem;text-align:center">
-                <div style="margin-bottom:0.5rem">{svg_icon("zap", 30, "#0d9488")}</div>
-                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Демо-данные</p>
-                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Синтетические кандидаты для знакомства</p>
-            </div>
-            """, unsafe_allow_html=True)
-            demo_size = st.selectbox("Количество кандидатов", [20, 35, 55, 80, 100], index=2, key="demo_size_select")
-            if st.button("Сгенерировать и оценить", type="primary", use_container_width=True, key="main_demo_btn"):
-                with st.spinner(f"Генерация {demo_size} кандидатов..."):
-                    raw = generate_dataset(demo_size, 42)
-                    candidates = [dict_to_candidate(r) for r in raw]
-                    st.session_state.candidates = candidates
-                    save_dataset(raw)
-                with st.spinner("Запуск скоринга..."):
-                    config = st.session_state.get("scoring_config", ScoringConfig())
-                    engine = ScoringEngine(config)
-                    for c in candidates:
-                        engine.score_candidate(c)
-                    engine.rank_candidates(candidates)
-                    st.session_state.scored = True
-                st.rerun()
+        # Three demo option cards side by side
+        st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Быстрый старт с демо-данными</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:{_c("secondary")};font-size:0.82rem;margin-bottom:0.8rem">Каждый запуск генерирует случайный набор кандидатов с новым seed.</p>', unsafe_allow_html=True)
 
-        with col_upload:
+        demo_col1, demo_col2, demo_col3 = st.columns(3)
+
+        demo_configs = [
+            (demo_col1, 30, "#3b82f6", "Демо: 30 кандидатов", "Случайный набор для быстрого знакомства"),
+            (demo_col2, 55, "#0d9488", "Демо: 55 кандидатов", "Случайный набор (рекомендуется)"),
+            (demo_col3, 100, "#8b5cf6", "Демо: 100 кандидатов", "Случайный набор для стресс-теста"),
+        ]
+
+        for col, size, color, title, desc in demo_configs:
+            with col:
+                st.markdown(f"""
+                <div class="glass-card demo-card" style="padding:1.5rem 1rem">
+                    <div style="font-size:2.8rem;font-weight:900;color:{color};line-height:1;margin-bottom:0.5rem">{size}</div>
+                    <p style="font-weight:700;color:{_c("heading")};font-size:0.9rem;margin:0">{title}</p>
+                    <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.3rem 0 0.8rem 0">{desc}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                if st.button(f"Запустить ({size})", type="primary" if size == 55 else "secondary", use_container_width=True, key=f"demo_{size}"):
+                    with st.spinner(f"Генерация {size} кандидатов..."):
+                        _run_demo(size)
+                    st.rerun()
+
+        st.markdown("")
+
+        # Upload own data button
+        st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Или загрузите свои данные</p>', unsafe_allow_html=True)
+
+        upload_col1, upload_col2 = st.columns(2)
+        with upload_col1:
             st.markdown(f"""
             <div class="glass-card" style="padding:1.2rem;text-align:center">
                 <div style="margin-bottom:0.5rem">{svg_icon("upload", 30, "#3b82f6")}</div>
@@ -1365,6 +1745,16 @@ def page_dashboard():
                 except Exception as e:
                     st.error(f"Ошибка: {str(e)}")
 
+        with upload_col2:
+            st.markdown(f"""
+            <div class="glass-card" style="padding:1.2rem;text-align:center">
+                <div style="margin-bottom:0.5rem">{svg_icon("database", 30, "#8b5cf6")}</div>
+                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Страница загрузки</p>
+                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Расширенные опции загрузки</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.button("Перейти к загрузке", use_container_width=True, key="go_upload", on_click=_nav_to, args=("Загрузка данных",))
+
         st.markdown("")
 
         # Capabilities compact
@@ -1386,6 +1776,28 @@ def page_dashboard():
 
     if st.session_state.get("scored", False):
         render_metrics_row(candidates)
+        st.markdown("")
+
+        # Action button cards row
+        st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Действия</p>', unsafe_allow_html=True)
+        act_cols = st.columns(4)
+        action_items = [
+            (act_cols[0], "bar-chart", "#0d9488", "Рейтинг кандидатов", "Полная таблица с баллами"),
+            (act_cols[1], "list", "#3b82f6", "Шорт-лист", "Сформировать финальный список"),
+            (act_cols[2], "user", "#8b5cf6", "Профиль кандидата", "Детальный профиль"),
+            (act_cols[3], "pie-chart", "#f59e0b", "Аналитика", "Валидация и графики"),
+        ]
+        for col, icon, color, label, desc in action_items:
+            with col:
+                st.markdown(f"""
+                <div class="glass-card action-card" style="padding:1rem;text-align:center">
+                    <div style="margin-bottom:0.4rem">{svg_icon(icon, 28, color)}</div>
+                    <p style="font-weight:700;color:{_c("heading")};font-size:0.88rem;margin:0">{label}</p>
+                    <p style="color:{_c("secondary")};font-size:0.72rem;margin:0.2rem 0 0">{desc}</p>
+                </div>
+                """, unsafe_allow_html=True)
+                st.button(f"Открыть", use_container_width=True, key=f"act_{label}", on_click=_nav_to, args=(label,))
+
         st.markdown("")
 
         col_left, col_right = st.columns([3, 2])
@@ -1423,25 +1835,13 @@ def page_dashboard():
                 yaxis=dict(title="Кол-во", gridcolor="rgba(148,163,184,0.1)"),
                 bargap=0.08,
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="chart_dash_score_histogram")
 
         # Quick actions row
         st.markdown("")
-        qa1, qa2, qa3, qa4 = st.columns(4)
+        qa1, qa2 = st.columns(2)
         with qa1:
-            if st.button("Рейтинг", use_container_width=True, key="qa_ranking"):
-                st.session_state.nav_page = "Рейтинг кандидатов"
-                st.rerun()
-        with qa2:
-            if st.button("Шорт-лист", use_container_width=True, key="qa_shortlist"):
-                st.session_state.nav_page = "Шорт-лист"
-                st.rerun()
-        with qa3:
-            if st.button("Аналитика", use_container_width=True, key="qa_analytics"):
-                st.session_state.nav_page = "Аналитика"
-                st.rerun()
-        with qa4:
-            if st.button("Пересчитать", use_container_width=True, key="qa_rescore"):
+            if st.button("Пересчитать оценки", use_container_width=True, key="qa_rescore"):
                 config = st.session_state.get("scoring_config", ScoringConfig())
                 engine = ScoringEngine(config)
                 for c in candidates:
@@ -1449,12 +1849,19 @@ def page_dashboard():
                 engine.rank_candidates(candidates)
                 st.session_state.scored = True
                 st.rerun()
+        with qa2:
+            st.button("Настройки модели", use_container_width=True, key="qa_settings", on_click=_nav_to, args=("Настройки модели",))
 
         # Dimension averages
         st.markdown("")
         dim_avgs = {}
         for dim_key, dim_name in DIMENSION_NAMES.items():
-            vals = [getattr(c, f"dim_{dim_key}", 0) for c in candidates if hasattr(c, f"dim_{dim_key}")]
+            vals = []
+            for c in candidates:
+                for b in c.score_breakdown:
+                    if b["dimension"] == dim_key:
+                        vals.append(b["score"])
+                        break
             if not vals:
                 vals = [0]
             dim_avgs[dim_name] = sum(vals) / len(vals)
@@ -1475,7 +1882,7 @@ def page_dashboard():
                 yaxis=dict(autorange="reversed"),
             )
             st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Средние баллы по измерениям</p>', unsafe_allow_html=True)
-            st.plotly_chart(fig_dim, use_container_width=True)
+            st.plotly_chart(fig_dim, use_container_width=True, key="chart_dash_dimension_avgs")
 
     else:
         st.markdown(f"""
@@ -1507,6 +1914,8 @@ def page_dashboard():
 # ---------------------------------------------------------------------------
 
 def page_upload():
+    _render_breadcrumb("Загрузка данных")
+
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Загрузка данных</p>', unsafe_allow_html=True)
 
     tab1, tab2 = st.tabs(["Загрузить файл", "Демо-данные"])
@@ -1524,12 +1933,44 @@ def page_upload():
         </div>
         """, unsafe_allow_html=True)
 
+        # Append option
+        append_mode = False
+        if st.session_state.get("candidates"):
+            append_mode = st.checkbox(
+                f"Добавить к существующим данным ({len(st.session_state.candidates)} кандидатов)",
+                value=False,
+                key="upload_append_mode",
+            )
+
         uploaded = st.file_uploader(
             "Выберите файл",
             type=["csv", "json"],
             help="Поддерживаемые форматы: CSV, JSON",
             label_visibility="collapsed",
+            key="upload_page_file",
         )
+
+        # Sample files for download
+        import os as _os
+        _sample_dir = _os.path.join(_os.path.dirname(__file__), "sample_data")
+        if _os.path.isdir(_sample_dir):
+            _sample_files = sorted([f for f in _os.listdir(_sample_dir) if f.endswith((".json", ".csv"))])
+            if _sample_files:
+                st.markdown(f'<p style="font-weight:600;font-size:0.9rem;color:{_c("secondary")};margin-top:1.2rem">Готовые файлы для загрузки:</p>', unsafe_allow_html=True)
+                _dl_cols = st.columns(min(len(_sample_files), 4))
+                for _i, _fname in enumerate(_sample_files):
+                    _fpath = _os.path.join(_sample_dir, _fname)
+                    _size_kb = _os.path.getsize(_fpath) // 1024
+                    _mime = "application/json" if _fname.endswith(".json") else "text/csv"
+                    with _dl_cols[_i % len(_dl_cols)]:
+                        with open(_fpath, "rb") as _ff:
+                            st.download_button(
+                                f"{_fname} ({_size_kb} KB)",
+                                _ff.read(),
+                                file_name=_fname,
+                                mime=_mime,
+                                key=f"dl_sample_{_fname}",
+                            )
 
         if uploaded:
             try:
@@ -1538,10 +1979,46 @@ def page_upload():
                     raw = load_candidates_from_json(content)
                 else:
                     raw = load_candidates_from_csv(content)
-                candidates = [dict_to_candidate(r) for r in raw]
-                st.session_state.candidates = candidates
+                new_candidates = [dict_to_candidate(r) for r in raw]
+
+                if append_mode and st.session_state.get("candidates"):
+                    existing = st.session_state.candidates
+                    st.session_state.candidates = existing + new_candidates
+                    st.success(f"Добавлено {len(new_candidates)} кандидатов. Всего: {len(st.session_state.candidates)}")
+                else:
+                    st.session_state.candidates = new_candidates
+                    st.success(f"Загружено {len(new_candidates)} кандидатов")
+
                 st.session_state.scored = False
-                st.success(f"Загружено {len(candidates)} кандидатов")
+
+                # Data quality indicators
+                cands = st.session_state.candidates
+                missing_essays = sum(1 for c in cands if not c.essays)
+                missing_gpa = sum(1 for c in cands if c.gpa <= 0)
+                missing_skills = sum(1 for c in cands if not c.skills)
+
+                qi_cols = st.columns(4)
+                qi_cols[0].metric("Всего загружено", len(cands))
+                qi_color_essays = "normal" if missing_essays == 0 else "inverse"
+                qi_cols[1].metric("Без эссе", missing_essays, delta_color=qi_color_essays)
+                qi_cols[2].metric("Без GPA", missing_gpa, delta_color="normal" if missing_gpa == 0 else "inverse")
+                qi_cols[3].metric("Без навыков", missing_skills, delta_color="normal" if missing_skills == 0 else "inverse")
+
+                if missing_essays == 0 and missing_gpa == 0 and missing_skills == 0:
+                    st.markdown(f"""
+                    <div class="glass-card" style="padding:0.8rem 1rem;display:flex;align-items:center;gap:0.5rem">
+                        {svg_icon("check-circle", 20, "#10b981")}
+                        <span style="color:#10b981;font-weight:600;font-size:0.88rem">Качество данных: отлично. Все поля заполнены.</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                    <div class="glass-card" style="padding:0.8rem 1rem;display:flex;align-items:center;gap:0.5rem">
+                        {svg_icon("alert-triangle", 20, "#f59e0b")}
+                        <span style="color:#f59e0b;font-weight:600;font-size:0.88rem">Некоторые данные отсутствуют. Скоринг будет работать, но точность может снизиться.</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
             except Exception as e:
                 st.error(f"Ошибка при загрузке: {str(e)}")
 
@@ -1558,11 +2035,11 @@ def page_upload():
 
         col1, col2 = st.columns(2)
         with col1:
-            num = st.slider("Количество кандидатов", 10, 100, 55)
+            num = st.slider("Количество кандидатов", 10, 100, 55, key="upload_demo_num")
         with col2:
-            seed = st.number_input("Seed (для воспроизводимости)", value=42)
+            seed = st.number_input("Seed (для воспроизводимости)", value=42, key="upload_demo_seed")
 
-        if st.button("Сгенерировать демо-данные", type="primary", use_container_width=True):
+        if st.button("Сгенерировать демо-данные", type="primary", use_container_width=True, key="btn_generate_demo"):
             with st.spinner("Генерация данных..."):
                 raw = generate_dataset(num, seed)
                 candidates = [dict_to_candidate(r) for r in raw]
@@ -1621,14 +2098,14 @@ def page_upload():
                 textfont=dict(size=11),
             )])
             fig_edu_pie.update_layout(
-                **_plotly_defaults(dark),
+                **_plotly_no_margin(dark),
                 height=280,
                 title=dict(text="Образование", font=dict(size=12)),
                 showlegend=True,
                 legend=dict(font=dict(size=10)),
                 margin=dict(t=50, b=20, l=20, r=20),
             )
-            st.plotly_chart(fig_edu_pie, use_container_width=True)
+            st.plotly_chart(fig_edu_pie, use_container_width=True, key="chart_upload_edu_pie")
 
         with chart_col2:
             city_counts = {}
@@ -1652,7 +2129,7 @@ def page_upload():
                 margin=dict(l=100, r=20, t=50, b=20),
                 showlegend=False,
             )
-            st.plotly_chart(fig_city_bar, use_container_width=True)
+            st.plotly_chart(fig_city_bar, use_container_width=True, key="chart_upload_city_bar")
 
         with chart_col3:
             gpa_vals = [c.gpa for c in cands]
@@ -1663,7 +2140,7 @@ def page_upload():
                 opacity=0.85,
             )])
             fig_gpa.update_layout(
-                **_plotly_defaults(dark),
+                **_plotly_no_margin(dark),
                 height=280,
                 title=dict(text="Распределение GPA", font=dict(size=12)),
                 xaxis=dict(title="GPA", gridcolor="rgba(148,163,184,0.1)"),
@@ -1671,7 +2148,7 @@ def page_upload():
                 margin=dict(t=50, b=40, l=50, r=20),
                 showlegend=False,
             )
-            st.plotly_chart(fig_gpa, use_container_width=True)
+            st.plotly_chart(fig_gpa, use_container_width=True, key="chart_upload_gpa_hist")
 
         st.markdown("")
 
@@ -1692,6 +2169,7 @@ def page_upload():
 # ---------------------------------------------------------------------------
 
 def page_ranking():
+    _render_breadcrumb("Рейтинг кандидатов")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Рейтинг кандидатов</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("scored", False):
@@ -1708,7 +2186,7 @@ def page_ranking():
     # Filters
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        search_name = st.text_input("Поиск по имени", "", placeholder="Введите имя...")
+        search_name = st.text_input("Поиск по имени", "", placeholder="Введите имя...", key="rank_search_name")
     with col2:
         min_score = st.slider("Мин. балл", 0.0, 100.0, 0.0, 5.0, key="rank_min_score")
     with col3:
@@ -1718,6 +2196,7 @@ def page_ranking():
             "Статус",
             ["Все", "Оценён", "В шорт-листе", "Отклонён", "Лист ожидания"],
             default=["Все"],
+            key="rank_status_filter",
         )
 
     status_map_reverse = {
@@ -1783,10 +2262,10 @@ def page_ranking():
     col1, col2 = st.columns(2)
     with col1:
         json_data = export_results_to_json(filtered)
-        st.download_button("Скачать JSON", json_data, "results.json", mime="application/json", use_container_width=True)
+        st.download_button("Скачать JSON", json_data, "results.json", mime="application/json", use_container_width=True, key="ranking_dl_json")
     with col2:
         csv_data = export_results_to_csv(filtered)
-        st.download_button("Скачать CSV", csv_data, "results.csv", mime="text/csv", use_container_width=True)
+        st.download_button("Скачать CSV", csv_data, "results.csv", mime="text/csv", use_container_width=True, key="ranking_dl_csv")
 
     render_footer()
 
@@ -1796,6 +2275,7 @@ def page_ranking():
 # ---------------------------------------------------------------------------
 
 def page_candidate_detail():
+    _render_breadcrumb("Профиль кандидата")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Профиль кандидата</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("candidates"):
@@ -1813,6 +2293,28 @@ def page_candidate_detail():
     if not candidate:
         render_footer()
         return
+
+    # Prev / Next navigation + back to ranking
+    current_idx = sorted_ids.index(selected_id) if selected_id in sorted_ids else 0
+    nav_col1, nav_col2, nav_col3 = st.columns(3)
+    with nav_col1:
+        if current_idx > 0:
+            prev_id = sorted_ids[current_idx - 1]
+            prev_name = next((c.full_name for c in st.session_state.candidates if c.id == prev_id), "")
+            if st.button(f"Предыдущий: {prev_name[:20]}", key="prof_prev", use_container_width=True):
+                st.session_state["selected_candidate_id"] = prev_id
+                st.rerun()
+    with nav_col2:
+        st.button("Вернуться к рейтингу", key="prof_to_ranking", use_container_width=True, on_click=_nav_to, args=("Рейтинг кандидатов",))
+    with nav_col3:
+        if current_idx < len(sorted_ids) - 1:
+            next_id = sorted_ids[current_idx + 1]
+            next_name = next((c.full_name for c in st.session_state.candidates if c.id == next_id), "")
+            if st.button(f"Следующий: {next_name[:20]}", key="prof_next", use_container_width=True):
+                st.session_state["selected_candidate_id"] = next_id
+                st.rerun()
+
+    st.markdown("")
 
     score_color = score_to_color(candidate.total_score)
     grade = score_to_grade(candidate.total_score)
@@ -1894,7 +2396,7 @@ def _render_scores_tab(candidate):
             height=440,
             title=dict(text="Радар компетенций", font=dict(size=15, color=label_color)),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="chart_profile_radar")
 
     with col_bars:
         st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-bottom:0.6rem">Детализация по критериям</p>', unsafe_allow_html=True)
@@ -1949,7 +2451,7 @@ def _render_scores_tab(candidate):
                 yaxis=dict(autorange="reversed"),
                 margin=dict(l=10, r=10, t=10, b=10),
             )
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, use_container_width=True, key=f"chart_profile_sub_{breakdown['dimension']}")
 
             evidence = breakdown.get("evidence", [])
             if evidence:
@@ -2155,6 +2657,7 @@ def _render_override_tab(candidate):
 # ---------------------------------------------------------------------------
 
 def page_comparison():
+    _render_breadcrumb("Сравнение")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Сравнение кандидатов</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("scored", False):
@@ -2165,12 +2668,20 @@ def page_comparison():
     dark = _is_dark()
     candidates = st.session_state.candidates
 
-    compare_ids = st.multiselect(
-        "Выберите кандидатов для сравнения (2-4)",
-        [c.id for c in candidates],
-        format_func=lambda x: next((c.full_name for c in candidates if c.id == x), x),
-        max_selections=4,
-    )
+    cmp_col1, cmp_col2 = st.columns([4, 1])
+    with cmp_col1:
+        compare_ids = st.multiselect(
+            "Выберите кандидатов для сравнения (2-4)",
+            [c.id for c in candidates],
+            format_func=lambda x: next((c.full_name for c in candidates if c.id == x), x),
+            max_selections=4,
+            key="cmp_select_ids",
+        )
+    with cmp_col2:
+        st.markdown("")
+        st.markdown("")
+        if len(compare_ids) < 4:
+            st.markdown(f'<p style="color:{_c("secondary")};font-size:0.8rem;margin-top:0.5rem">Выберите еще кандидатов из списка слева (макс. 4)</p>', unsafe_allow_html=True)
 
     if len(compare_ids) < 2:
         st.markdown("""
@@ -2217,7 +2728,7 @@ def page_comparison():
         title=dict(text="Наложение профилей", font=dict(size=15)),
         legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, key="chart_compare_overlay_radar")
 
     # Dimension-by-dimension comparison
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-bottom:0.5rem">Сравнение по измерениям</p>', unsafe_allow_html=True)
@@ -2287,6 +2798,7 @@ def page_comparison():
 # ---------------------------------------------------------------------------
 
 def page_shortlist():
+    _render_breadcrumb("Шорт-лист")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Шорт-лист</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("scored", False):
@@ -2302,9 +2814,9 @@ def page_shortlist():
     with col2:
         max_count = st.number_input("Макс. кол-во", 5, 100, 20, key="sl_max")
     with col3:
-        exclude_ai = st.checkbox("Исключить подозрительные авто-эссе", value=True)
+        exclude_ai = st.checkbox("Исключить подозрительные авто-эссе", value=True, key="sl_exclude_ai")
 
-    if st.button("Сформировать шорт-лист", type="primary", use_container_width=True):
+    if st.button("Сформировать шорт-лист", type="primary", use_container_width=True, key="btn_generate_shortlist"):
         engine = ScoringEngine(config)
         candidates = st.session_state.candidates
 
@@ -2362,13 +2874,35 @@ def page_shortlist():
             """, unsafe_allow_html=True)
 
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
+
+        st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-bottom:0.5rem">Экспорт шорт-листа</p>', unsafe_allow_html=True)
+        exp_col1, exp_col2, exp_col3 = st.columns(3)
+        with exp_col1:
             json_data = export_results_to_json(shortlisted)
-            st.download_button("Экспорт JSON", json_data, "shortlist.json", mime="application/json", use_container_width=True)
-        with col2:
+            st.markdown(f"""
+            <div class="glass-card" style="padding:0.8rem;text-align:center">
+                <div style="margin-bottom:0.3rem">{svg_icon("file-text", 24, "#3b82f6")}</div>
+                <p style="font-weight:600;color:{_c("heading")};font-size:0.85rem;margin:0">Экспорт в JSON</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.download_button("Скачать JSON", json_data, "shortlist.json", mime="application/json", use_container_width=True, key="sl_json")
+        with exp_col2:
             csv_data = export_results_to_csv(shortlisted)
-            st.download_button("Экспорт CSV", csv_data, "shortlist.csv", mime="text/csv", use_container_width=True)
+            st.markdown(f"""
+            <div class="glass-card" style="padding:0.8rem;text-align:center">
+                <div style="margin-bottom:0.3rem">{svg_icon("download", 24, "#0d9488")}</div>
+                <p style="font-weight:600;color:{_c("heading")};font-size:0.85rem;margin:0">Экспорт в CSV</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.download_button("Скачать CSV", csv_data, "shortlist.csv", mime="text/csv", use_container_width=True, key="sl_csv")
+        with exp_col3:
+            st.markdown(f"""
+            <div class="glass-card" style="padding:0.8rem;text-align:center">
+                <div style="margin-bottom:0.3rem">{svg_icon("settings", 24, "#8b5cf6")}</div>
+                <p style="font-weight:600;color:{_c("heading")};font-size:0.85rem;margin:0">Настроить параметры</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.button("Настройки модели", use_container_width=True, key="sl_settings", on_click=_nav_to, args=("Настройки модели",))
 
     render_footer()
 
@@ -2385,6 +2919,7 @@ def _get_candidate_display_name(candidate, index=0):
 
 
 def page_analytics():
+    _render_breadcrumb("Аналитика")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Аналитика</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("scored", False):
@@ -2400,7 +2935,11 @@ def page_analytics():
     stats = engine.get_dimension_stats(candidates)
     scores = [c.total_score for c in candidates]
 
-    from scipy.stats import gaussian_kde
+    try:
+        from scipy.stats import gaussian_kde
+        _has_kde = True
+    except ImportError:
+        _has_kde = False
 
     # Row 1: Distribution + Box plots
     col1, col2 = st.columns(2)
@@ -2413,7 +2952,7 @@ def page_analytics():
             opacity=0.85,
             name="Распределение",
         ))
-        if len(scores) > 2:
+        if _has_kde and len(scores) > 2:
             try:
                 kde = gaussian_kde(scores)
                 x_range = np.linspace(min(scores) - 5, max(scores) + 5, 200)
@@ -2436,7 +2975,7 @@ def page_analytics():
             bargap=0.06,
             legend=dict(orientation="h", y=-0.18),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="chart_analytics_score_kde")
 
     with col2:
         dim_keys = ["motivation", "leadership", "growth", "skills", "experience"]
@@ -2464,7 +3003,7 @@ def page_analytics():
                 yaxis=dict(range=[0, 100], gridcolor="rgba(148,163,184,0.1)"),
                 xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
             )
-            st.plotly_chart(fig_box, use_container_width=True)
+            st.plotly_chart(fig_box, use_container_width=True, key="chart_analytics_dim_boxplots")
 
     # Row 2: Correlation Heatmap + City fairness
     col1, col2 = st.columns(2)
@@ -2498,7 +3037,7 @@ def page_analytics():
             height=380,
             xaxis=dict(tickangle=-45),
         )
-        st.plotly_chart(fig_heat, use_container_width=True)
+        st.plotly_chart(fig_heat, use_container_width=True, key="chart_analytics_correlation_heat")
 
     with col2:
         city_scores = {}
@@ -2537,7 +3076,7 @@ def page_analytics():
             height=380,
             margin=dict(l=150, r=30, t=50, b=40),
         )
-        st.plotly_chart(fig_city, use_container_width=True)
+        st.plotly_chart(fig_city, use_container_width=True, key="chart_analytics_city_fairness")
 
     # ===================================================================
     # BASELINE COMPARISONS (3 baselines)
@@ -2648,7 +3187,7 @@ def page_analytics():
         yaxis=dict(title="Кол-во", gridcolor="rgba(148,163,184,0.1)"),
         legend=dict(orientation="h", y=-0.2),
     )
-    st.plotly_chart(fig_comp, use_container_width=True)
+    st.plotly_chart(fig_comp, use_container_width=True, key="chart_baseline_comparison")
 
     # ===================================================================
     # MODEL VALIDATION
@@ -2796,7 +3335,7 @@ def page_analytics():
         xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
         showlegend=False,
     )
-    st.plotly_chart(fig_ablation, use_container_width=True)
+    st.plotly_chart(fig_ablation, use_container_width=True, key="chart_validation_ablation")
 
     # --- Sensitivity analysis ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Анализ чувствительности весов</p>', unsafe_allow_html=True)
@@ -2848,7 +3387,7 @@ def page_analytics():
         xaxis=dict(title="Сдвиг веса"),
         yaxis=dict(title="Измерение"),
     )
-    st.plotly_chart(fig_sens, use_container_width=True)
+    st.plotly_chart(fig_sens, use_container_width=True, key="chart_validation_sensitivity")
 
     # --- Score distribution analysis ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Анализ распределения баллов</p>', unsafe_allow_html=True)
@@ -2863,7 +3402,7 @@ def page_analytics():
         marker=dict(color="#0d9488", line=dict(color="rgba(255,255,255,0.2)", width=1)),
         opacity=0.8, name="Распределение",
     ))
-    if len(scores) > 2:
+    if _has_kde and len(scores) > 2:
         try:
             kde_d = gaussian_kde(scores)
             x_r = np.linspace(min(scores) - 5, max(scores) + 5, 200)
@@ -2884,7 +3423,7 @@ def page_analytics():
         yaxis=dict(title="Количество", gridcolor="rgba(148,163,184,0.1)"),
         legend=dict(orientation="h", y=-0.18),
     )
-    st.plotly_chart(fig_dist, use_container_width=True)
+    st.plotly_chart(fig_dist, use_container_width=True, key="chart_validation_score_dist")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Среднее", f"{score_mean:.1f}")
@@ -2941,7 +3480,7 @@ def page_analytics():
             yaxis=dict(title="Общий балл", gridcolor="rgba(148,163,184,0.1)"),
             legend=dict(orientation="h", y=-0.18),
         )
-        st.plotly_chart(fig_err_scatter, use_container_width=True)
+        st.plotly_chart(fig_err_scatter, use_container_width=True, key="chart_validation_gpa_scatter")
 
     with col_err2:
         # Residual distribution
@@ -2963,7 +3502,7 @@ def page_analytics():
             yaxis=dict(title="Кол-во", gridcolor="rgba(148,163,184,0.1)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_resid, use_container_width=True)
+        st.plotly_chart(fig_resid, use_container_width=True, key="chart_validation_residuals")
 
     # Error summary metrics
     mae = np.mean(np.abs(residuals))
@@ -3028,13 +3567,26 @@ def page_analytics():
         yaxis=dict(title="Кол-во кандидатов", gridcolor="rgba(148,163,184,0.1)"),
         showlegend=False,
     )
-    st.plotly_chart(fig_spread, use_container_width=True)
+    st.plotly_chart(fig_spread, use_container_width=True, key="chart_validation_spread")
 
     # ===================================================================
     # FAIRNESS ANALYSIS (expanded)
     # ===================================================================
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     st.markdown(f'<p style="font-weight:700;font-size:1.15rem;color:{_c("heading")}">Анализ справедливости</p>', unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class="glass-card" style="padding:1rem 1.2rem;margin-bottom:1rem;border-left:3px solid #0d9488">
+        <p style="font-weight:700;color:{_c("heading")};font-size:0.92rem;margin:0 0 0.4rem 0">Гарантии справедливости модели</p>
+        <div style="color:{_c("card_text")};font-size:0.85rem;line-height:1.7">
+            <p style="margin:0 0 0.3rem 0">- Модель НЕ использует пол, расу, этническую принадлежность, религию или социально-экономический статус в качестве признаков для оценки.</p>
+            <p style="margin:0 0 0.3rem 0">- Город используется исключительно для анализа справедливости (мониторинга предвзятости), но НЕ влияет на скоринг кандидата.</p>
+            <p style="margin:0 0 0.3rem 0">- Возраст кандидата отображается в профиле, но НЕ учитывается при расчёте баллов.</p>
+            <p style="margin:0 0 0.3rem 0">- Все оценочные критерии основаны исключительно на компетенциях, достижениях и содержании эссе.</p>
+            <p style="margin:0">- Ниже представлен анализ справедливости по группам для выявления возможных неявных смещений.</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # --- Fairness by education level ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:0.5rem">Справедливость по уровню образования</p>', unsafe_allow_html=True)
@@ -3077,7 +3629,7 @@ def page_analytics():
             xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_edu, use_container_width=True)
+        st.plotly_chart(fig_edu, use_container_width=True, key="chart_fairness_edu_bar")
 
     # --- Fairness by work experience ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Справедливость по опыту работы</p>', unsafe_allow_html=True)
@@ -3121,7 +3673,7 @@ def page_analytics():
             xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_exp, use_container_width=True)
+        st.plotly_chart(fig_exp, use_container_width=True, key="chart_fairness_exp_bar")
 
     # --- Disparate impact ratio ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Коэффициент диспаратного воздействия</p>', unsafe_allow_html=True)
@@ -3233,7 +3785,7 @@ def page_analytics():
                 xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
                 yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
             )
-            st.plotly_chart(fig_ai, use_container_width=True)
+            st.plotly_chart(fig_ai, use_container_width=True, key="chart_integrity_ai_detect")
         with col2:
             fig_auth = go.Figure()
             fig_auth.add_trace(go.Histogram(x=auth_scores_all, nbinsx=20, marker_color="#10b981", opacity=0.8))
@@ -3245,7 +3797,7 @@ def page_analytics():
                 xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
                 yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
             )
-            st.plotly_chart(fig_auth, use_container_width=True)
+            st.plotly_chart(fig_auth, use_container_width=True, key="chart_integrity_authenticity")
 
     # Stats table
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Статистика по измерениям</p>', unsafe_allow_html=True)
@@ -3269,6 +3821,7 @@ def page_analytics():
 # ---------------------------------------------------------------------------
 
 def page_settings():
+    _render_breadcrumb("Настройки модели")
     st.markdown(f'<p style="font-weight:700;font-size:1.3rem;color:{_c("heading")};margin-bottom:1rem">Настройки модели и запуск оценки</p>', unsafe_allow_html=True)
 
     if not st.session_state.get("candidates"):
@@ -3316,7 +3869,7 @@ def page_settings():
 
     col_reset, _ = st.columns([1, 3])
     with col_reset:
-        if st.button("Сбросить к значениям по умолчанию"):
+        if st.button("Сбросить к значениям по умолчанию", key="btn_reset_config"):
             st.session_state.scoring_config = ScoringConfig()
             st.rerun()
 
@@ -3324,7 +3877,7 @@ def page_settings():
 
     # Run scoring
     if abs(total_w - 1.0) <= 0.01:
-        if st.button("Запустить оценку кандидатов", type="primary", use_container_width=True):
+        if st.button("Запустить оценку кандидатов", type="primary", use_container_width=True, key="btn_run_scoring"):
             engine = ScoringEngine(config)
             progress = st.progress(0, text="Оценка кандидатов...")
 
@@ -3377,6 +3930,30 @@ def page_settings():
     # Privacy & Security section
     # ===================================================================
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
+    with st.expander("Алгоритмическая прозрачность", expanded=False):
+        st.markdown(f"""
+        <div class="glass-card" style="margin-bottom:1rem">
+            <p style="font-weight:700;color:{_c("heading")};font-size:1.05rem;margin:0 0 0.8rem 0">Как работает модель оценки</p>
+            <div style="color:{_c("card_text")};font-size:0.88rem;line-height:1.8">
+                <p style="margin:0 0 0.6rem 0;font-weight:600;color:{_c("heading")}">1. Сбор и подготовка данных</p>
+                <p style="margin:0 0 0.4rem 0">- Анкетные данные кандидата: GPA, навыки, опыт, достижения, волонтёрство, проекты, рекомендации.</p>
+                <p style="margin:0 0 0.4rem 0">- Эссе обрабатываются модулем NLP-анализа (тональность, сложность, аутентичность, детекция ИИ).</p>
+                <p style="margin:0 0 0.6rem 0;font-weight:600;color:{_c("heading")}">2. Скоринг по 5 измерениям</p>
+                <p style="margin:0 0 0.4rem 0">- Мотивация (по умолч. 25%): анализ эссе, волонтёрство, рекомендации, проекты.</p>
+                <p style="margin:0 0 0.4rem 0">- Лидерство (20%): лидерские роли, ключевые слова лидерства в эссе, командные достижения.</p>
+                <p style="margin:0 0 0.4rem 0">- Траектория роста (20%): GPA, уровень образования, индикаторы роста в эссе, разнообразие достижений.</p>
+                <p style="margin:0 0 0.4rem 0">- Навыки (20%): количество и качество навыков, языки, проекты.</p>
+                <p style="margin:0 0 0.4rem 0">- Опыт (15%): стаж работы, достижения, волонтёрство, проекты.</p>
+                <p style="margin:0 0 0.6rem 0;font-weight:600;color:{_c("heading")}">3. NLP-бонусы и штрафы</p>
+                <p style="margin:0 0 0.4rem 0">- Бонус за сложность, аутентичность и лексическое богатство эссе.</p>
+                <p style="margin:0 0 0.4rem 0">- Штраф за высокую вероятность авто-генерации (>65%: полный штраф, >40%: половинный).</p>
+                <p style="margin:0 0 0.6rem 0;font-weight:600;color:{_c("heading")}">4. Итоговый балл</p>
+                <p style="margin:0 0 0.4rem 0">- Взвешенная сумма баллов по 5 измерениям + NLP-бонус - штраф за ИИ.</p>
+                <p style="margin:0 0 0.4rem 0">- Диапазон: 0-100 баллов. Члены комиссии могут корректировать оценку вручную.</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with st.expander("Приватность и безопасность", expanded=False):
         st.markdown(f"""
         <div class="glass-card" style="margin-bottom:1rem">
@@ -3387,6 +3964,8 @@ def page_settings():
                 <p style="margin:0 0 0.4rem 0">- Данные сессии не сохраняются на диск без явного запроса пользователя.</p>
                 <p style="margin:0 0 0.4rem 0">- Экспорт данных возможен только по инициативе пользователя.</p>
                 <p style="margin:0 0 0.4rem 0">- Персональные данные кандидатов не передаются третьим сторонам.</p>
+                <p style="margin:0 0 0.4rem 0">- Модель не использует пол, расу, этничность, религию или социально-экономический статус для оценки (отсутствие демографического прокси-скоринга).</p>
+                <p style="margin:0 0 0.4rem 0">- Особая защита несовершеннолетних: анонимизация доступна для всех кандидатов.</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -3437,6 +4016,11 @@ def main():
     init_session_state()
     inject_custom_css()
 
+    # Handle nav_page redirect (from old quick-action buttons)
+    if "nav_page" in st.session_state:
+        st.session_state["current_page"] = st.session_state.nav_page
+        del st.session_state.nav_page
+
     # Sidebar
     with st.sidebar:
         st.markdown("""
@@ -3448,7 +4032,7 @@ def main():
             </div>
             <h2 style="margin:0;color:#e2e8f0;font-size:1.3rem;font-weight:800;letter-spacing:-0.5px">inVision U</h2>
             <p style="color:#64748b;font-size:0.78rem;margin-top:0.2rem;font-weight:500;letter-spacing:0.5px;text-transform:uppercase">
-                Приёмная комиссия
+                Приемная комиссия
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -3457,51 +4041,43 @@ def main():
 
         # Theme toggle
         dark = _is_dark()
-        theme_icon = svg_icon("moon", 16, "#94a3b8") if dark else svg_icon("sun", 16, "#f59e0b")
-        st.toggle("Тёмная тема", value=dark, key="dark_mode")
+        st.toggle("Темная тема", value=dark, key="dark_mode")
 
         st.markdown("---")
 
-        st.markdown(f"""
+        st.markdown("""
         <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:600;margin-bottom:0.3rem;padding-left:0.2rem">
             Навигация
         </p>
         """, unsafe_allow_html=True)
 
-        nav_options = [
-            "Главная",
-            "Загрузка данных",
-            "Рейтинг кандидатов",
-            "Профиль кандидата",
-            "Сравнение",
-            "Шорт-лист",
-            "Аналитика",
-            "Настройки модели",
+        nav_items = [
+            ("home", "Главная"),
+            ("upload", "Загрузка данных"),
+            ("bar-chart", "Рейтинг кандидатов"),
+            ("user", "Профиль кандидата"),
+            ("git-compare", "Сравнение"),
+            ("list", "Шорт-лист"),
+            ("pie-chart", "Аналитика"),
+            ("settings", "Настройки модели"),
         ]
 
-        default_idx = 0
-        if "nav_page" in st.session_state and st.session_state.nav_page in nav_options:
-            default_idx = nav_options.index(st.session_state.nav_page)
-            del st.session_state.nav_page
+        current_page = st.session_state.get("current_page", "Главная")
 
-        page = st.radio(
-            "Навигация",
-            nav_options,
-            index=default_idx,
-            label_visibility="collapsed",
-        )
-
-        nav_descriptions = {
-            "Главная": "Обзор проекта, ключевые метрики и топ-5",
-            "Загрузка данных": "Импорт CSV/JSON или генерация демо-данных",
-            "Рейтинг кандидатов": "Полная таблица с баллами, фильтрами и экспортом",
-            "Профиль кандидата": "Детальный профиль, эссе, обоснования и корректировка",
-            "Сравнение": "Наложение радаров и сравнение 2-4 кандидатов",
-            "Шорт-лист": "Формирование финального списка с AI-фильтрацией",
-            "Аналитика": "Валидация модели, fairness, baseline-сравнение",
-            "Настройки модели": "Веса критериев, приватность и запуск оценки",
-        }
-        st.caption(nav_descriptions.get(page, ""))
+        for icon_name, page_label in nav_items:
+            is_active = (current_page == page_label)
+            css_class = "nav-btn-active" if is_active else "nav-btn-container"
+            icon_color = "#5eead4" if is_active else "#64748b"
+            icon_html = svg_icon(icon_name, 16, icon_color)
+            st.markdown(f'<div class="{css_class}">', unsafe_allow_html=True)
+            st.button(
+                f"{page_label}",
+                key=f"nav_{page_label}",
+                on_click=_nav_to,
+                args=(page_label,),
+                use_container_width=True,
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown("---")
 
@@ -3518,6 +4094,25 @@ def main():
             </div>
             """, unsafe_allow_html=True)
 
+            # Reset data button
+            st.markdown("")
+            if st.button("Сбросить данные", key="sidebar_reset_data", use_container_width=True):
+                st.session_state.candidates = []
+                st.session_state.scored = False
+                st.session_state.shortlist_generated = False
+                st.session_state.overrides = {}
+                st.session_state.current_page = "Главная"
+                st.rerun()
+
+            # Refresh demo data button (only if demo data was loaded)
+            if st.session_state.get("demo_size"):
+                if st.button("Обновить демо-данные", key="sidebar_refresh_demo", use_container_width=True):
+                    demo_size = st.session_state.get("demo_size", 55)
+                    st.session_state.overrides = {}
+                    st.session_state.shortlist_generated = False
+                    _run_demo(demo_size)
+                    st.rerun()
+
         st.markdown("""
         <div style="position:fixed;bottom:0.8rem;font-size:0.7rem;color:#475569;line-height:1.4">
             inVision U by inDrive<br>
@@ -3529,6 +4124,7 @@ def main():
     render_header()
 
     # Page routing
+    page = st.session_state.get("current_page", "Главная")
     if page == "Главная":
         page_dashboard()
     elif page == "Загрузка данных":
