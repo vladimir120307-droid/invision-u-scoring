@@ -192,6 +192,18 @@ def _css_shared():
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes headerShimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        @keyframes miniCardEnter {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes winnerPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(13,148,136,0); }
+        }
 
         /* ===== Page transition ===== */
         section.main > div.block-container {
@@ -226,12 +238,12 @@ def _css_shared():
         .main-header::after {
             content: '';
             position: absolute;
-            bottom: -30%;
-            left: 10%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(13,148,136,0.2) 0%, transparent 70%);
-            border-radius: 50%;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+            animation: headerShimmer 6s ease-in-out infinite;
         }
         .main-header h1 {
             font-size: 1.9rem;
@@ -383,17 +395,19 @@ def _css_shared():
 
         /* ===== Streamlit elements override ===== */
         .stButton>button[kind="primary"] {
-            background: linear-gradient(135deg, #0d9488, #0f766e) !important;
+            background: linear-gradient(135deg, #0d9488, #2563eb) !important;
             border: none !important;
             border-radius: 10px !important;
             font-weight: 600 !important;
             letter-spacing: 0.2px !important;
             padding: 0.55rem 1.5rem !important;
-            transition: all 0.3s ease !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 2px 8px rgba(13,148,136,0.2) !important;
         }
         .stButton>button[kind="primary"]:hover {
-            box-shadow: 0 6px 24px rgba(13,148,136,0.35) !important;
+            box-shadow: 0 6px 28px rgba(13,148,136,0.4), 0 0 12px rgba(59,130,246,0.2) !important;
             transform: translateY(-2px) !important;
+            filter: brightness(1.08) !important;
         }
         .stButton>button[kind="secondary"] {
             border-radius: 10px !important;
@@ -446,20 +460,33 @@ def _css_shared():
         .app-footer {
             text-align: center;
             padding: 2rem 0 1rem 0;
-            font-size: 0.78rem;
-            letter-spacing: 0.3px;
-            opacity: 0.7;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+            opacity: 0.5;
+            font-weight: 300;
+            border-top: 1px solid rgba(148,163,184,0.08);
+            margin-top: 2rem;
+            padding-top: 1.2rem;
         }
 
         /* ===== Sidebar ===== */
         div[data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+            background: linear-gradient(180deg, #0c1222 0%, #0f172a 35%, #162032 70%, #0d3330 100%) !important;
         }
         div[data-testid="stSidebar"] .stRadio label {
             color: #e2e8f0 !important;
         }
         div[data-testid="stSidebar"] .stRadio label:hover {
             color: #0d9488 !important;
+        }
+        div[data-testid="stSidebar"] [role="radio"] {
+            border-left: 3px solid transparent !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        div[data-testid="stSidebar"] [role="radio"][aria-checked="true"],
+        div[data-testid="stSidebar"] [role="radio"][data-checked="true"] {
+            border-left-color: #0d9488 !important;
+            background: rgba(13,148,136,0.12) !important;
         }
         div[data-testid="stSidebar"] .stMarkdown p,
         div[data-testid="stSidebar"] .stMarkdown span,
@@ -496,15 +523,15 @@ def _css_dark():
         }
         .glass-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(13,148,136,0.08);
             border-color: rgba(13,148,136,0.3);
         }
 
         /* ===== Metric Cards ===== */
         .metric-card-v2 {
             background: rgba(30,41,59,0.8);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(71,85,105,0.3);
             border-radius: 16px;
             padding: 1.3rem 1rem;
@@ -520,11 +547,16 @@ def _css_dark():
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #0d9488, #3b82f6, #8b5cf6);
             border-radius: 16px 16px 0 0;
         }
+        .metric-card-v2:nth-child(1)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(1) .metric-card-v2::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+        .metric-card-v2:nth-child(2)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(2) .metric-card-v2::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .metric-card-v2:nth-child(3)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(3) .metric-card-v2::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .metric-card-v2:nth-child(4)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(4) .metric-card-v2::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .metric-card-v2:nth-child(5)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(5) .metric-card-v2::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .metric-card-v2:nth-child(6)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(6) .metric-card-v2::before { background: linear-gradient(90deg, #10b981, #34d399); }
         .metric-card-v2:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 12px 36px rgba(13,148,136,0.15);
         }
         .metric-icon { margin-bottom: 0.5rem; display: flex; justify-content: center; align-items: center; }
@@ -675,19 +707,20 @@ def _css_dark():
         .styled-table thead th {
             background: linear-gradient(135deg, #0f172a, #1e3a5f);
             color: #e2e8f0;
-            padding: 0.8rem 1rem;
+            padding: 0.85rem 1rem;
             font-weight: 600;
             text-align: left;
             font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .styled-table tbody tr { transition: all 0.2s ease; }
-        .styled-table tbody tr:nth-child(even) { background: rgba(30,41,59,0.4); }
-        .styled-table tbody tr:hover { background: rgba(13,148,136,0.1); transform: scale(1.002); }
+        .styled-table tbody tr { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .styled-table tbody tr:nth-child(odd) { background: rgba(30,41,59,0.3); }
+        .styled-table tbody tr:nth-child(even) { background: rgba(30,41,59,0.5); }
+        .styled-table tbody tr:hover { background: rgba(13,148,136,0.12); transform: scale(1.003); }
         .styled-table tbody td {
-            padding: 0.7rem 1rem;
-            border-bottom: 1px solid rgba(71,85,105,0.2);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(71,85,105,0.15);
             color: #cbd5e1;
             max-width: 200px;
             overflow: hidden;
@@ -701,15 +734,21 @@ def _css_dark():
             backdrop-filter: blur(10px);
             border: 1px solid rgba(71,85,105,0.3);
             border-radius: 12px;
-            padding: 0.8rem 1rem;
-            margin-bottom: 0.4rem;
+            padding: 0.85rem 1.1rem;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.25s ease;
-            animation: fadeInUp 0.5s ease-out;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: miniCardEnter 0.4s ease-out both;
+            border-left: 3px solid transparent;
         }
-        .mini-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .mini-card:nth-child(1) { animation-delay: 0s; border-left-color: #0d9488; }
+        .mini-card:nth-child(2) { animation-delay: 0.06s; border-left-color: #3b82f6; }
+        .mini-card:nth-child(3) { animation-delay: 0.12s; border-left-color: #8b5cf6; }
+        .mini-card:nth-child(4) { animation-delay: 0.18s; border-left-color: #f59e0b; }
+        .mini-card:nth-child(5) { animation-delay: 0.24s; border-left-color: #ec4899; }
+        .mini-card:hover { transform: translateX(6px); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
         .mini-card-rank { font-size: 1.1rem; font-weight: 800; color: #0d9488; min-width: 28px; }
         .mini-card-name { font-size: 0.88rem; font-weight: 600; color: #e2e8f0; flex: 1; margin-left: 0.6rem; }
         .mini-card-score { font-size: 0.9rem; font-weight: 700; }
@@ -726,6 +765,46 @@ def _css_dark():
 
         /* ===== Footer dark ===== */
         .app-footer { color: #64748b; }
+
+        /* ===== Expanders ===== */
+        .streamlit-expanderHeader {
+            border-left: 3px solid #0d9488 !important;
+            border-radius: 0 8px 8px 0 !important;
+            padding-left: 1rem !important;
+            transition: all 0.25s ease !important;
+        }
+        .streamlit-expanderHeader:hover {
+            background: rgba(13,148,136,0.06) !important;
+            border-left-color: #3b82f6 !important;
+        }
+        details[data-testid="stExpander"] {
+            border: 1px solid rgba(71,85,105,0.25) !important;
+            border-left: 3px solid #0d9488 !important;
+            border-radius: 0 12px 12px 0 !important;
+            transition: all 0.25s ease !important;
+        }
+        details[data-testid="stExpander"]:hover {
+            border-left-color: #3b82f6 !important;
+            box-shadow: 0 2px 12px rgba(13,148,136,0.06) !important;
+        }
+
+        /* ===== Winner card animation ===== */
+        .winner-badge {
+            animation: winnerPulse 2s ease-in-out infinite;
+        }
+
+        /* ===== Score dot indicator ===== */
+        .score-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .score-dot-high { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.4); }
+        .score-dot-mid { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+        .score-dot-low { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.4); }
 
         /* ===== Dark text helpers ===== */
         .text-primary { color: #e2e8f0 !important; }
@@ -771,15 +850,15 @@ def _css_light():
         }
         .glass-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 12px rgba(13,148,136,0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 12px rgba(13,148,136,0.08), inset 0 1px 0 rgba(13,148,136,0.06);
             border-color: rgba(13,148,136,0.3);
         }
 
         /* ===== Metric Cards ===== */
         .metric-card-v2 {
             background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(226,232,240,0.7);
             border-radius: 16px;
             padding: 1.3rem 1rem;
@@ -795,12 +874,17 @@ def _css_light():
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #0d9488, #3b82f6, #8b5cf6);
             border-radius: 16px 16px 0 0;
         }
+        .metric-card-v2:nth-child(1)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(1) .metric-card-v2::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+        .metric-card-v2:nth-child(2)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(2) .metric-card-v2::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .metric-card-v2:nth-child(3)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(3) .metric-card-v2::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .metric-card-v2:nth-child(4)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(4) .metric-card-v2::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .metric-card-v2:nth-child(5)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(5) .metric-card-v2::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .metric-card-v2:nth-child(6)::before, div[data-testid="stHorizontalBlock"] > div:nth-child(6) .metric-card-v2::before { background: linear-gradient(90deg, #10b981, #34d399); }
         .metric-card-v2:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 36px rgba(13,148,136,0.15);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 36px rgba(13,148,136,0.12);
         }
         .metric-icon { margin-bottom: 0.5rem; display: flex; justify-content: center; align-items: center; }
         .metric-value {
@@ -959,12 +1043,13 @@ def _css_light():
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .styled-table tbody tr { transition: all 0.2s ease; }
-        .styled-table tbody tr:nth-child(even) { background: rgba(248,250,252,0.6); }
-        .styled-table tbody tr:hover { background: rgba(13,148,136,0.06); transform: scale(1.002); }
+        .styled-table tbody tr { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .styled-table tbody tr:nth-child(odd) { background: rgba(255,255,255,0.7); }
+        .styled-table tbody tr:nth-child(even) { background: rgba(248,250,252,0.8); }
+        .styled-table tbody tr:hover { background: rgba(13,148,136,0.06); transform: scale(1.003); }
         .styled-table tbody td {
-            padding: 0.7rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(226,232,240,0.5);
             color: #334155;
             max-width: 200px;
             overflow: hidden;
@@ -978,16 +1063,22 @@ def _css_light():
             backdrop-filter: blur(10px);
             border: 1px solid rgba(226,232,240,0.7);
             border-radius: 12px;
-            padding: 0.8rem 1rem;
-            margin-bottom: 0.4rem;
+            padding: 0.85rem 1.1rem;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.25s ease;
-            animation: fadeInUp 0.5s ease-out;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: miniCardEnter 0.4s ease-out both;
             box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+            border-left: 3px solid transparent;
         }
-        .mini-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .mini-card:nth-child(1) { animation-delay: 0s; border-left-color: #0d9488; }
+        .mini-card:nth-child(2) { animation-delay: 0.06s; border-left-color: #3b82f6; }
+        .mini-card:nth-child(3) { animation-delay: 0.12s; border-left-color: #8b5cf6; }
+        .mini-card:nth-child(4) { animation-delay: 0.18s; border-left-color: #f59e0b; }
+        .mini-card:nth-child(5) { animation-delay: 0.24s; border-left-color: #ec4899; }
+        .mini-card:hover { transform: translateX(6px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
         .mini-card-rank { font-size: 1.1rem; font-weight: 800; color: #0d9488; min-width: 28px; }
         .mini-card-name { font-size: 0.88rem; font-weight: 600; color: #1e293b; flex: 1; margin-left: 0.6rem; }
         .mini-card-score { font-size: 0.9rem; font-weight: 700; }
@@ -1020,6 +1111,18 @@ def _css_light():
         .drag-drop-area {
             background: linear-gradient(135deg, rgba(13,148,136,0.04), rgba(59,130,246,0.04));
             box-shadow: 0 1px 6px rgba(0,0,0,0.03);
+        }
+
+        /* ===== Expanders light ===== */
+        details[data-testid="stExpander"] {
+            border: 1px solid rgba(226,232,240,0.7) !important;
+            border-left: 3px solid #0d9488 !important;
+            border-radius: 0 12px 12px 0 !important;
+            transition: all 0.25s ease !important;
+        }
+        details[data-testid="stExpander"]:hover {
+            border-left-color: #3b82f6 !important;
+            box-shadow: 0 2px 12px rgba(13,148,136,0.06) !important;
         }
 
         /* ===== Light text helpers ===== */
@@ -1186,28 +1289,21 @@ def render_metrics_row(candidates):
 
 def page_dashboard():
     if not st.session_state.get("candidates"):
-        # Hero block with problem statement
+        # Hero with problem/solution
         st.markdown(f"""
-        <div class="glass-card" style="padding:2.5rem 2rem">
-            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem">
-                <div>{svg_icon("award", 44, "#0d9488")}</div>
-                <div>
-                    <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.5rem">Система отбора кандидатов inVision U</h2>
-                    <p style="color:{_c("secondary")};margin:0.2rem 0 0 0;font-size:0.9rem">Автоматизация первичного отбора для приёмной комиссии</p>
-                </div>
+        <div class="glass-card" style="padding:2rem">
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+                <div>{svg_icon("award", 40, "#0d9488")}</div>
+                <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.4rem">Система отбора кандидатов inVision U</h2>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
-                <div style="padding:1rem 1.2rem;border-radius:10px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444">
-                    <p style="font-weight:700;color:#ef4444;margin:0 0 0.4rem 0;font-size:0.85rem">ПРОБЛЕМА</p>
-                    <p style="color:{_c("primary")};margin:0;font-size:0.82rem;line-height:1.5">
-                        Ручная оценка заявок занимает сотни часов. Сильные кандидаты теряются из-за слабой самопрезентации. Генеративный ИИ размывает подлинный голос в эссе.
-                    </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div style="padding:0.8rem 1rem;border-radius:8px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444">
+                    <p style="font-weight:700;color:#ef4444;margin:0 0 0.3rem 0;font-size:0.8rem">ПРОБЛЕМА</p>
+                    <p style="color:{_c("primary")};margin:0;font-size:0.8rem;line-height:1.4">Ручная оценка заявок, потеря талантов, ИИ-генерация эссе</p>
                 </div>
-                <div style="padding:1rem 1.2rem;border-radius:10px;background:rgba(13,148,136,0.06);border-left:3px solid #0d9488">
-                    <p style="font-weight:700;color:#0d9488;margin:0 0 0.4rem 0;font-size:0.85rem">РЕШЕНИЕ</p>
-                    <p style="color:{_c("primary")};margin:0;font-size:0.82rem;line-height:1.5">
-                        ML-скоринг по 5 измерениям с NLP-анализом эссе, детекцией ИИ-генерации и объяснением каждой оценки. Human-in-the-loop.
-                    </p>
+                <div style="padding:0.8rem 1rem;border-radius:8px;background:rgba(13,148,136,0.06);border-left:3px solid #0d9488">
+                    <p style="font-weight:700;color:#0d9488;margin:0 0 0.3rem 0;font-size:0.8rem">РЕШЕНИЕ</p>
+                    <p style="color:{_c("primary")};margin:0;font-size:0.8rem;line-height:1.4">ML-скоринг, NLP-анализ, детекция ИИ, Explainable AI</p>
                 </div>
             </div>
         </div>
@@ -1215,53 +1311,20 @@ def page_dashboard():
 
         st.markdown("")
 
-        # Capabilities grid
-        st.markdown(f"""
-        <div class="glass-card" style="padding:1.5rem 2rem">
-            <p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin:0 0 1rem 0">Возможности платформы</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
-                <div style="padding:1rem;border-radius:10px;background:rgba(13,148,136,0.06);border:1px solid rgba(13,148,136,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("bar-chart-2", 28, "#0d9488")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Скоринг по 5 измерениям</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Мотивация, лидерство, рост, навыки, опыт</p>
-                </div>
-                <div style="padding:1rem;border-radius:10px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("file-text", 28, "#3b82f6")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">NLP-анализ эссе</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Тональность, сложность, лексика, аутентичность</p>
-                </div>
-                <div style="padding:1rem;border-radius:10px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("shield", 28, "#8b5cf6")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Детекция ИИ-генерации</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Выявление ChatGPT и аналогов в текстах</p>
-                </div>
-                <div style="padding:1rem;border-radius:10px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("eye", 28, "#f59e0b")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Объяснимость (XAI)</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Прозрачные причины каждой оценки</p>
-                </div>
-                <div style="padding:1rem;border-radius:10px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("users", 28, "#ec4899")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Human-in-the-loop</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Ручная корректировка и комментарии комиссии</p>
-                </div>
-                <div style="padding:1rem;border-radius:10px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);text-align:center">
-                    <div style="margin-bottom:0.5rem">{svg_icon("check-circle", 28, "#10b981")}</div>
-                    <p style="font-weight:600;color:{_c("primary")};margin:0;font-size:0.85rem">Fairness-анализ</p>
-                    <p style="color:{_c("secondary")};font-size:0.75rem;margin-top:0.3rem">Проверка на предвзятость по регионам и группам</p>
-                </div>
+        # Action section - demo load with size choice + file upload
+        col_demo, col_upload = st.columns(2)
+        with col_demo:
+            st.markdown(f"""
+            <div class="glass-card" style="padding:1.2rem;text-align:center">
+                <div style="margin-bottom:0.5rem">{svg_icon("zap", 30, "#0d9488")}</div>
+                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Демо-данные</p>
+                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Синтетические кандидаты для знакомства</p>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("")
-
-        # Demo button
-        col_l, col_center, col_r = st.columns([1, 2, 1])
-        with col_center:
-            if st.button("Загрузить демо-данные и запустить скоринг", type="primary", use_container_width=True, key="main_demo_btn"):
-                with st.spinner("Генерация данных..."):
-                    raw = generate_dataset(55, 42)
+            """, unsafe_allow_html=True)
+            demo_size = st.selectbox("Количество кандидатов", [20, 35, 55, 80, 100], index=2, key="demo_size_select")
+            if st.button("Сгенерировать и оценить", type="primary", use_container_width=True, key="main_demo_btn"):
+                with st.spinner(f"Генерация {demo_size} кандидатов..."):
+                    raw = generate_dataset(demo_size, 42)
                     candidates = [dict_to_candidate(r) for r in raw]
                     st.session_state.candidates = candidates
                     save_dataset(raw)
@@ -1273,6 +1336,48 @@ def page_dashboard():
                     engine.rank_candidates(candidates)
                     st.session_state.scored = True
                 st.rerun()
+
+        with col_upload:
+            st.markdown(f"""
+            <div class="glass-card" style="padding:1.2rem;text-align:center">
+                <div style="margin-bottom:0.5rem">{svg_icon("upload", 30, "#3b82f6")}</div>
+                <p style="font-weight:700;color:{_c("heading")};font-size:0.95rem;margin:0">Свои данные</p>
+                <p style="color:{_c("secondary")};font-size:0.78rem;margin:0.2rem 0 0.8rem 0">Загрузите CSV или JSON файл</p>
+            </div>
+            """, unsafe_allow_html=True)
+            uploaded = st.file_uploader("Файл кандидатов", type=["csv", "json"], label_visibility="collapsed", key="dash_upload")
+            if uploaded:
+                try:
+                    content = uploaded.read().decode("utf-8")
+                    if uploaded.name.endswith(".json"):
+                        raw = load_candidates_from_json(content)
+                    else:
+                        raw = load_candidates_from_csv(content)
+                    candidates = [dict_to_candidate(r) for r in raw]
+                    st.session_state.candidates = candidates
+                    config = st.session_state.get("scoring_config", ScoringConfig())
+                    engine = ScoringEngine(config)
+                    for c in candidates:
+                        engine.score_candidate(c)
+                    engine.rank_candidates(candidates)
+                    st.session_state.scored = True
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Ошибка: {str(e)}")
+
+        st.markdown("")
+
+        # Capabilities compact
+        caps = [
+            (svg_icon("bar-chart-2", 22, "#0d9488"), "Скоринг по 5 измерениям"),
+            (svg_icon("file-text", 22, "#3b82f6"), "NLP-анализ эссе"),
+            (svg_icon("shield", 22, "#8b5cf6"), "Детекция ИИ-генерации"),
+            (svg_icon("eye", 22, "#f59e0b"), "Explainable AI"),
+            (svg_icon("users", 22, "#ec4899"), "Human-in-the-loop"),
+            (svg_icon("check-circle", 22, "#10b981"), "Fairness-анализ"),
+        ]
+        cap_html = "".join(f'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0"><div>{ic}</div><span style="color:{_c("primary")};font-size:0.82rem">{txt}</span></div>' for ic, txt in caps)
+        st.markdown(f'<div class="glass-card" style="padding:1rem 1.5rem"><p style="font-weight:700;font-size:0.9rem;color:{_c("heading")};margin:0 0 0.5rem 0">Возможности</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.2rem">{cap_html}</div></div>', unsafe_allow_html=True)
 
         render_footer()
         return
@@ -1319,16 +1424,65 @@ def page_dashboard():
                 bargap=0.08,
             )
             st.plotly_chart(fig, use_container_width=True)
+
+        # Quick actions row
+        st.markdown("")
+        qa1, qa2, qa3, qa4 = st.columns(4)
+        with qa1:
+            if st.button("Рейтинг", use_container_width=True, key="qa_ranking"):
+                st.session_state.nav_page = "Рейтинг кандидатов"
+                st.rerun()
+        with qa2:
+            if st.button("Шорт-лист", use_container_width=True, key="qa_shortlist"):
+                st.session_state.nav_page = "Шорт-лист"
+                st.rerun()
+        with qa3:
+            if st.button("Аналитика", use_container_width=True, key="qa_analytics"):
+                st.session_state.nav_page = "Аналитика"
+                st.rerun()
+        with qa4:
+            if st.button("Пересчитать", use_container_width=True, key="qa_rescore"):
+                config = st.session_state.get("scoring_config", ScoringConfig())
+                engine = ScoringEngine(config)
+                for c in candidates:
+                    engine.score_candidate(c)
+                engine.rank_candidates(candidates)
+                st.session_state.scored = True
+                st.rerun()
+
+        # Dimension averages
+        st.markdown("")
+        dim_avgs = {}
+        for dim_key, dim_name in DIMENSION_NAMES.items():
+            vals = [getattr(c, f"dim_{dim_key}", 0) for c in candidates if hasattr(c, f"dim_{dim_key}")]
+            if not vals:
+                vals = [0]
+            dim_avgs[dim_name] = sum(vals) / len(vals)
+        if any(v > 0 for v in dim_avgs.values()):
+            dark = _is_dark()
+            fig_dim = go.Figure()
+            fig_dim.add_trace(go.Bar(
+                x=list(dim_avgs.values()),
+                y=list(dim_avgs.keys()),
+                orientation="h",
+                marker=dict(color=CHART_COLORS[:5], cornerradius=4),
+            ))
+            fig_dim.update_layout(
+                **_plotly_defaults(dark),
+                height=220,
+                showlegend=False,
+                xaxis=dict(title="Средний балл", gridcolor="rgba(148,163,184,0.1)"),
+                yaxis=dict(autorange="reversed"),
+            )
+            st.markdown(f'<p style="font-weight:700;font-size:1.05rem;color:{_c("heading")};margin-bottom:0.5rem">Средние баллы по измерениям</p>', unsafe_allow_html=True)
+            st.plotly_chart(fig_dim, use_container_width=True)
+
     else:
         st.markdown(f"""
         <div class="glass-card" style="text-align:center;padding:2rem">
             <div style="margin-bottom:0.8rem">{svg_icon("users", 40, "#0d9488")}</div>
-            <p style="font-weight:600;color:{_c("primary")};font-size:1.1rem;margin:0">
-                Загружено {len(candidates)} кандидатов
-            </p>
-            <p style="color:{_c("secondary")};font-size:0.88rem;margin:0.3rem 0 1rem 0">
-                Данные готовы. Запустите скоринг для получения оценок.
-            </p>
+            <p style="font-weight:600;color:{_c("primary")};font-size:1.1rem;margin:0">Загружено {len(candidates)} кандидатов</p>
+            <p style="color:{_c("secondary")};font-size:0.88rem;margin:0.3rem 0 1rem 0">Нажмите кнопку для запуска оценки</p>
         </div>
         """, unsafe_allow_html=True)
         col_l2, col_c2, col_r2 = st.columns([1, 2, 1])
@@ -1726,19 +1880,19 @@ def _render_scores_tab(candidate):
             fill="toself",
             name="Баллы",
             line=dict(color="#0d9488", width=2.5),
-            fillcolor="rgba(13,148,136,0.12)",
-            marker=dict(size=6, color="#0d9488"),
+            fillcolor="rgba(13,148,136,0.15)",
+            marker=dict(size=7, color="#0d9488"),
         ))
         fig.update_layout(
             **_plotly_defaults(dark),
             polar=dict(
-                radialaxis=dict(visible=True, range=[0, 100], tickfont=dict(size=9, color=tick_color), gridcolor="rgba(148,163,184,0.15)"),
-                angularaxis=dict(tickfont=dict(size=11, color=label_color), gridcolor="rgba(148,163,184,0.15)"),
+                radialaxis=dict(visible=True, range=[0, 100], tickfont=dict(size=10, color=tick_color), gridcolor="rgba(148,163,184,0.12)"),
+                angularaxis=dict(tickfont=dict(size=12, color=label_color), gridcolor="rgba(148,163,184,0.12)"),
                 bgcolor="rgba(0,0,0,0)",
             ),
             showlegend=False,
-            height=380,
-            title=dict(text="Радар компетенций", font=dict(size=14, color=label_color)),
+            height=440,
+            title=dict(text="Радар компетенций", font=dict(size=15, color=label_color)),
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -2046,7 +2200,7 @@ def page_comparison():
             line=dict(color=colors[idx], width=2.5),
             fill="toself",
             fillcolor=f"rgba({int(colors[idx][1:3],16)},{int(colors[idx][3:5],16)},{int(colors[idx][5:7],16)},0.06)",
-            marker=dict(size=5),
+            marker=dict(size=6),
         ))
 
     tick_color = "#94a3b8" if dark else "#64748b"
@@ -2055,12 +2209,12 @@ def page_comparison():
     fig.update_layout(
         **_plotly_defaults(dark),
         polar=dict(
-            radialaxis=dict(visible=True, range=[0, 100], gridcolor="rgba(148,163,184,0.15)", tickfont=dict(size=9, color=tick_color)),
-            angularaxis=dict(gridcolor="rgba(148,163,184,0.15)", tickfont=dict(size=11, color=label_color)),
+            radialaxis=dict(visible=True, range=[0, 100], gridcolor="rgba(148,163,184,0.12)", tickfont=dict(size=10, color=tick_color)),
+            angularaxis=dict(gridcolor="rgba(148,163,184,0.12)", tickfont=dict(size=12, color=label_color)),
             bgcolor="rgba(0,0,0,0)",
         ),
-        height=420,
-        title=dict(text="Наложение профилей", font=dict(size=14)),
+        height=480,
+        title=dict(text="Наложение профилей", font=dict(size=15)),
         legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -2628,7 +2782,7 @@ def page_analytics():
     abl_colors = ["#ef4444" if d < -1 else "#f59e0b" if d < 0 else "#22c55e" for d in abl_deltas]
     fig_ablation.add_trace(go.Bar(
         x=abl_labels, y=abl_deltas,
-        marker_color=abl_colors,
+        marker=dict(color=abl_colors, cornerradius=4),
         text=[f"{d:+.1f}" for d in abl_deltas],
         textposition="outside",
         textfont=dict(size=11),
@@ -2909,7 +3063,7 @@ def page_analytics():
         fig_edu.add_trace(go.Bar(
             x=edu_names, y=edu_means,
             error_y=dict(type="data", array=edu_stds, visible=True, color="#94a3b8"),
-            marker_color=CHART_COLORS[:len(edu_names)],
+            marker=dict(color=CHART_COLORS[:len(edu_names)], cornerradius=4),
             text=[f"{m:.1f} (n={n})" for m, n in zip(edu_means, edu_counts)],
             textposition="outside",
             textfont=dict(size=10),
@@ -2953,7 +3107,7 @@ def page_analytics():
         fig_exp.add_trace(go.Bar(
             x=exp_names_list, y=exp_means_list,
             error_y=dict(type="data", array=exp_stds_list, visible=True, color="#94a3b8"),
-            marker_color=["#3b82f6", "#0d9488", "#8b5cf6"],
+            marker=dict(color=["#3b82f6", "#0d9488", "#8b5cf6"], cornerradius=4),
             text=[f"{m:.1f} (n={n})" for m, n in zip(exp_means_list, exp_counts_list)],
             textposition="outside",
             textfont=dict(size=10),
@@ -3325,9 +3479,15 @@ def main():
             "Настройки модели",
         ]
 
+        default_idx = 0
+        if "nav_page" in st.session_state and st.session_state.nav_page in nav_options:
+            default_idx = nav_options.index(st.session_state.nav_page)
+            del st.session_state.nav_page
+
         page = st.radio(
             "Навигация",
             nav_options,
+            index=default_idx,
             label_visibility="collapsed",
         )
 
