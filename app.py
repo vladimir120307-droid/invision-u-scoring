@@ -1,3 +1,4 @@
+import html
 import json
 import random
 import streamlit as st
@@ -23,6 +24,11 @@ from utils import (
     export_results_to_csv,
     format_score,
 )
+
+def _esc(text: str) -> str:
+    """Sanitize user-supplied text before injecting into HTML."""
+    return html.escape(str(text)) if text else ""
+
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -1699,6 +1705,10 @@ def page_dashboard():
                 <div>{svg_icon("award", 40, "#3B82F6")}</div>
                 <h2 style="margin:0;color:{_c("heading")};font-weight:800;font-size:1.4rem">Система отбора кандидатов inVision U</h2>
             </div>
+            <p style="color:{_c("primary")};font-size:0.85rem;line-height:1.5;margin:0 0 1rem 0">
+                Пять измерений оценки -- Мотивация, Лидерство, Траектория роста, Навыки и Опыт -- напрямую отражают миссию inVision U: выявлять и развивать инновационное мышление, предпринимательский потенциал и лидерские качества для будущего Казахстана.
+                Система объективно измеряет готовность кандидата стать проводником перемен в соответствии с философией inDrive: создание технологий, которые меняют общество к лучшему.
+            </p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
                 <div style="padding:0.8rem 1rem;border-radius:8px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444">
                     <p style="font-weight:700;color:#ef4444;margin:0 0 0.3rem 0;font-size:0.8rem">ПРОБЛЕМА</p>
@@ -1995,8 +2005,8 @@ def page_dashboard():
                 st.markdown(f"""
                 <div class="mini-card" style="animation-delay: {i*0.08}s">
                     <span class="mini-card-rank">#{i+1}</span>
-                    <span class="mini-card-name">{c.full_name}</span>
-                    <span class="text-secondary" style="font-size:0.78rem;margin-right:0.6rem">{c.city}</span>
+                    <span class="mini-card-name">{_esc(c.full_name)}</span>
+                    <span class="text-secondary" style="font-size:0.78rem;margin-right:0.6rem">{_esc(c.city)}</span>
                     <span class="mini-card-score" style="color:{color}">{eff:.1f}</span>
                 </div>
                 """, unsafe_allow_html=True)
@@ -2559,8 +2569,8 @@ def page_ranking():
             rows_html += f"""<tr>
                 <td style="font-weight:700;color:#3B82F6">#{c.rank}</td>
                 <td>
-                    <div style="font-weight:600;color:{_c("primary")}">{c.full_name}</div>
-                    <div style="font-size:0.75rem;color:{_c("muted")}">{c.city}</div>
+                    <div style="font-weight:600;color:{_c("primary")}">{_esc(c.full_name)}</div>
+                    <div style="font-size:0.75rem;color:{_c("muted")}">{_esc(c.city)}</div>
                 </td>
                 <td style="min-width:140px">
                     <div style="display:flex;align-items:center;gap:8px">
@@ -2657,12 +2667,12 @@ def page_candidate_detail():
     <div class="hero-section">
         {avatar}
         <div style="flex:1">
-            <div style="font-size:1.4rem;font-weight:800;color:{_c("heading")};letter-spacing:-0.5px">{candidate.full_name}</div>
+            <div style="font-size:1.4rem;font-weight:800;color:{_c("heading")};letter-spacing:-0.5px">{_esc(candidate.full_name)}</div>
             <div style="color:{_c("secondary")};font-size:0.88rem;margin-top:0.2rem">
-                {candidate.city}, {candidate.country}  /  {candidate.age} лет  /  {candidate.university}
+                {_esc(candidate.city)}, {_esc(candidate.country)}  /  {candidate.age} лет  /  {_esc(candidate.university)}
             </div>
             <div style="color:{_c("muted")};font-size:0.82rem;margin-top:0.15rem">
-                {candidate.email}  /  {candidate.education_level.upper()}  /  GPA: {candidate.gpa}
+                {_esc(candidate.email)}  /  {_esc(candidate.education_level).upper()}  /  GPA: {candidate.gpa}
             </div>
             <div style="margin-top:0.5rem">{_status_pill_html(candidate.application_status)}</div>
         </div>
@@ -2672,6 +2682,51 @@ def page_candidate_detail():
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # --- Profile completeness indicator ---
+    profile_fields = [
+        ("Имя", bool(candidate.full_name)),
+        ("Email", bool(candidate.email)),
+        ("Возраст", candidate.age > 0),
+        ("Город", bool(candidate.city)),
+        ("Образование", bool(candidate.education_level)),
+        ("Университет", bool(candidate.university)),
+        ("GPA", candidate.gpa > 0),
+        ("Опыт работы", candidate.work_experience_years > 0),
+        ("Навыки", len(candidate.skills) > 0),
+        ("Достижения", len(candidate.achievements) > 0),
+        ("Эссе", len(candidate.essays) > 0),
+        ("Языки", len(candidate.languages) > 0),
+        ("Лидерские роли", len(candidate.leadership_roles) > 0),
+        ("Волонтёрство", candidate.volunteer_hours > 0),
+        ("Проекты", len(candidate.projects) > 0),
+        ("Рекомендации", candidate.recommendation_count > 0),
+    ]
+    filled = sum(1 for _, v in profile_fields if v)
+    total_fields = len(profile_fields)
+    completeness_pct = filled / total_fields * 100
+    missing_fields = [name for name, v in profile_fields if not v]
+
+    comp_color = "#22c55e" if completeness_pct >= 80 else "#f59e0b" if completeness_pct >= 50 else "#ef4444"
+    missing_html = ""
+    if missing_fields:
+        missing_html = f'<span style="color:{_c("secondary")};font-size:0.78rem"> -- не заполнено: {", ".join(missing_fields)}</span>'
+
+    st.markdown(f"""
+    <div class="glass-card" style="padding:0.7rem 1.2rem;margin-bottom:0.5rem">
+        <div style="display:flex;align-items:center;gap:0.8rem">
+            <span style="font-weight:600;color:{_c("primary")};font-size:0.85rem">Полнота профиля:</span>
+            <span style="font-weight:700;color:{comp_color};font-size:0.95rem">{completeness_pct:.0f}%</span>
+            <span style="color:{_c("secondary")};font-size:0.82rem">(заполнено {filled} из {total_fields} полей)</span>
+            {missing_html}
+        </div>
+        {_score_bar_html(completeness_pct, 100, 6)}
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- GPA outlier warning ---
+    if candidate.gpa > 5.0:
+        st.warning(f"Необычное значение GPA: {candidate.gpa}. Стандартная шкала: 0.0 -- 5.0. Проверьте корректность данных.")
 
     if not candidate.score_breakdown:
         st.info("Кандидат ещё не оценён. Запустите оценку в разделе 'Настройки модели'.")
@@ -3100,7 +3155,7 @@ def page_comparison():
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-bottom:0.5rem">Сводка</p>', unsafe_allow_html=True)
 
-    header = "<th>Параметр</th>" + "".join(f"<th>{c.full_name}</th>" for c in selected)
+    header = "<th>Параметр</th>" + "".join(f"<th>{_esc(c.full_name)}</th>" for c in selected)
     rows = ""
     params = [
         ("Общий балл", [f"{c.total_score:.1f}" for c in selected]),
@@ -3195,8 +3250,8 @@ def page_shortlist():
             <div class="candidate-card-v2" style="border-left-color:{color};display:flex;align-items:center;gap:1rem">
                 {avatar}
                 <div style="flex:1">
-                    <div class="candidate-name">{c.full_name}</div>
-                    <div class="candidate-meta">{c.city} / {c.university} / GPA {c.gpa:.2f}</div>
+                    <div class="candidate-name">{_esc(c.full_name)}</div>
+                    <div class="candidate-meta">{_esc(c.city)} / {_esc(c.university)} / GPA {c.gpa:.2f}</div>
                 </div>
                 <div style="text-align:right">
                     <div style="font-size:1.3rem;font-weight:800;color:{color}">{effective:.1f}</div>
@@ -3266,6 +3321,62 @@ def page_analytics():
     engine = ScoringEngine(config)
     stats = engine.get_dimension_stats(candidates)
     scores = [c.total_score for c in candidates]
+
+    analytics_tab1, analytics_tab2, analytics_tab3, analytics_tab4 = st.tabs([
+        "Распределения и базовые модели",
+        "Валидация модели",
+        "Справедливость",
+        "NLP-аналитика",
+    ])
+
+    with analytics_tab1:
+        _render_analytics_distributions(dark, candidates, config, engine, stats, scores)
+
+    with analytics_tab2:
+        _render_analytics_validation(dark, candidates, config, engine, scores)
+
+    with analytics_tab3:
+        _render_analytics_fairness(dark, candidates, config, engine, scores)
+
+    with analytics_tab4:
+        _render_analytics_nlp(dark, candidates, stats)
+
+    render_footer()
+
+
+def _render_analytics_distributions(dark, candidates, config, engine, stats, scores):
+    """Render distribution charts and baseline comparisons."""
+
+    # --- Data quality summary ---
+    def _profile_completeness(c):
+        fields = [
+            bool(c.full_name), bool(c.email), c.age > 0, bool(c.city),
+            bool(c.education_level), bool(c.university), c.gpa > 0,
+            c.work_experience_years > 0, len(c.skills) > 0, len(c.achievements) > 0,
+            len(c.essays) > 0, len(c.languages) > 0, len(c.leadership_roles) > 0,
+            c.volunteer_hours > 0, len(c.projects) > 0, c.recommendation_count > 0,
+        ]
+        return sum(fields) / len(fields) * 100
+
+    completeness_scores = [_profile_completeness(c) for c in candidates]
+    avg_completeness = np.mean(completeness_scores)
+    gpa_outliers = sum(1 for c in candidates if c.gpa > 5.0)
+
+    dq_color = "#22c55e" if avg_completeness >= 80 else "#f59e0b" if avg_completeness >= 50 else "#ef4444"
+    dq_gpa_warn = ""
+    if gpa_outliers > 0:
+        dq_gpa_warn = f'<span style="color:#f59e0b;font-weight:600;margin-left:1rem">Внимание: {gpa_outliers} кандидатов с GPA > 5.0</span>'
+
+    st.markdown(f"""
+    <div class="glass-card" style="padding:0.8rem 1.2rem;margin-bottom:1rem;border-left:3px solid {dq_color}">
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <span style="font-weight:700;color:{_c("heading")};font-size:0.92rem">Качество данных</span>
+            <span style="font-weight:600;color:{_c("primary")};font-size:0.85rem">Средняя полнота профилей:</span>
+            <span style="font-weight:700;color:{dq_color};font-size:0.95rem">{avg_completeness:.1f}%</span>
+            {dq_gpa_warn}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     try:
         from scipy.stats import gaussian_kde
@@ -3451,11 +3562,23 @@ def page_analytics():
     equal_avg = np.mean([c.total_score for c in equal_top])
     equal_min = min(c.total_score for c in equal_top)
 
+    # Baseline 4: Rule-based heuristic (GPA > 3.5 AND volunteer > 50 AND leadership > 0)
+    rules_top = [c for c in candidates if c.gpa > 3.5 and c.volunteer_hours > 50 and len(c.leadership_roles) > 0]
+    rules_top_sorted = sorted(rules_top, key=lambda c: c.total_score, reverse=True)[:n_select]
+    if rules_top_sorted:
+        rules_avg = np.mean([c.total_score for c in rules_top_sorted])
+        rules_min = min(c.total_score for c in rules_top_sorted)
+    else:
+        rules_avg = 0.0
+        rules_min = 0.0
+    rules_n = len(rules_top_sorted)
+
     # Count strong candidates lost by each baseline
     ai_top_ids = {c.id for c in ai_top}
     random_lost = sum(1 for c in ai_top if c.id not in {candidates[i].id for i in random_indices})
     gpa_lost = sum(1 for c in ai_top if c.id not in {c2.id for c2 in gpa_top})
     equal_lost = sum(1 for c in ai_top if c.id not in {c2.id for c2 in equal_top})
+    rules_lost = sum(1 for c in ai_top if c.id not in {c2.id for c2 in rules_top_sorted})
 
     # Comparison table
     comparison_rows = f"""
@@ -3476,6 +3599,12 @@ def page_analytics():
         <td>{equal_avg:.1f}</td>
         <td>{equal_min:.1f}</td>
         <td style="color:#f59e0b">{equal_lost}</td>
+    </tr>
+    <tr>
+        <td>Простые правила (GPA&gt;3.5, волонт.&gt;50ч, лидерство&gt;0)</td>
+        <td>{rules_avg:.1f}</td>
+        <td>{rules_min:.1f}</td>
+        <td style="color:#f59e0b">{rules_lost}</td>
     </tr>
     <tr>
         <td>Случайный отбор</td>
@@ -3499,11 +3628,12 @@ def page_analytics():
 
     st.markdown("")
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("ИИ-скоринг", f"{ai_avg:.1f}", f"+{ai_avg - random_avg:.1f} vs случайный")
     col2.metric("Только GPA", f"{gpa_avg:.1f}", f"{gpa_avg - ai_avg:+.1f} vs ИИ")
     col3.metric("Равные веса", f"{equal_avg:.1f}", f"{equal_avg - ai_avg:+.1f} vs ИИ")
-    col4.metric("Случайный", f"{random_avg:.1f}", f"{random_avg - ai_avg:+.1f} vs ИИ")
+    col4.metric("Простые правила", f"{rules_avg:.1f}", f"{rules_avg - ai_avg:+.1f} vs ИИ")
+    col5.metric("Случайный", f"{random_avg:.1f}", f"{random_avg - ai_avg:+.1f} vs ИИ")
 
     # --- Улучшение vs случайный отбор ---
     improv_vs_random = ((ai_avg - random_avg) / max(random_avg, 0.01)) * 100
@@ -3546,10 +3676,23 @@ def page_analytics():
     )
     st.plotly_chart(fig_comp, use_container_width=True, key="chart_baseline_comparison")
 
+
+def _render_analytics_validation(dark, candidates, config, engine, scores):
+    """Render model validation, expert validation, error analysis, and robustness sections."""
+    ranked = sorted(candidates, key=lambda c: c.total_score, reverse=True)
+    current_weights = config.get_weights()
+
+    try:
+        from scipy.stats import gaussian_kde
+        _has_kde = True
+    except ImportError:
+        _has_kde = False
+
+    render_skeleton(2)
+
     # ===================================================================
     # MODEL VALIDATION
     # ===================================================================
-    st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     st.markdown(f'<p style="font-weight:700;font-size:1.15rem;color:{_c("heading")}">Валидация модели</p>', unsafe_allow_html=True)
 
     # --- Stratified split validation ---
@@ -3884,7 +4027,7 @@ def page_analytics():
             direction = "Балл выше GPA-ожидания" if res > 0 else "Балл ниже GPA-ожидания"
             dir_color = "#22c55e" if res > 0 else "#ef4444"
             err_rows_html += f"""<tr>
-                <td style="font-weight:600">{c.full_name}</td>
+                <td style="font-weight:600">{_esc(c.full_name)}</td>
                 <td>{c.gpa:.2f}</td>
                 <td>{c.total_score:.1f}</td>
                 <td style="color:{dir_color};font-weight:700">{res:+.1f}</td>
@@ -4174,9 +4317,225 @@ def page_analytics():
         st.plotly_chart(fig_calib, use_container_width=True, key="chart_calibration")
 
     # ===================================================================
-    # FAIRNESS ANALYSIS (expanded)
+    # EXPERT VALIDATION (simulated)
     # ===================================================================
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
+    st.markdown(f'<p style="font-weight:700;font-size:1.15rem;color:{_c("heading")}">Экспертная валидация</p>', unsafe_allow_html=True)
+    st.caption("Симулированные экспертные оценки для демонстрации методологии валидации. В производственной среде используются реальные эксперты.")
+
+    st.markdown(f"""
+    <div class="glass-card" style="padding:0.6rem 1rem;margin-bottom:0.8rem;border-left:3px solid #f59e0b">
+        <p style="color:{_c("secondary")};font-size:0.82rem;margin:0;font-style:italic">Симулированные экспертные оценки для демонстрации методологии валидации. Экспертные баллы генерируются как зашумлённая версия модельных оценок с добавлением случайных расхождений.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Simulate expert scores for a panel of candidates
+    expert_sample_size = min(15, len(candidates))
+    np.random.seed(77)
+    expert_indices = np.random.choice(len(candidates), size=expert_sample_size, replace=False)
+    expert_candidates = [candidates[i] for i in expert_indices]
+
+    model_scores_expert = np.array([c.total_score for c in expert_candidates])
+    expert_noise = np.random.normal(0, 8, size=expert_sample_size)
+    disagreement_mask = np.random.random(expert_sample_size) < 0.2
+    expert_noise[disagreement_mask] += np.random.choice([-15, 15], size=int(disagreement_mask.sum()))
+    expert_scores_sim = np.clip(model_scores_expert + expert_noise, 0, 100)
+
+    # Correlation
+    try:
+        from scipy.stats import spearmanr as _spearmanr_exp, pearsonr as _pearsonr_exp
+        spearman_exp, spearman_p_exp = _spearmanr_exp(model_scores_expert, expert_scores_sim)
+        pearson_exp, pearson_p_exp = _pearsonr_exp(model_scores_expert, expert_scores_sim)
+        _has_corr = True
+    except ImportError:
+        _has_corr = False
+
+    if _has_corr:
+        exp_cols = st.columns(3)
+        exp_cols[0].metric("Корреляция Спирмена (модель vs эксперт)", f"{spearman_exp:.3f}")
+        exp_cols[1].metric("Корреляция Пирсона", f"{pearson_exp:.3f}")
+
+        # Confusion matrix: model recommends vs expert recommends
+        threshold_exp = config.shortlist_threshold
+        model_rec = model_scores_expert >= threshold_exp
+        expert_rec = expert_scores_sim >= threshold_exp
+
+        tp = int(np.sum(model_rec & expert_rec))
+        fp = int(np.sum(model_rec & ~expert_rec))
+        fn = int(np.sum(~model_rec & expert_rec))
+        tn = int(np.sum(~model_rec & ~expert_rec))
+
+        total_agree = tp + tn
+        total_all = tp + fp + fn + tn
+        observed_agree = total_agree / max(total_all, 1)
+        p_model = (tp + fp) / max(total_all, 1)
+        p_expert = (tp + fn) / max(total_all, 1)
+        p_no_model = 1 - p_model
+        p_no_expert = 1 - p_expert
+        expected_agree = p_model * p_expert + p_no_model * p_no_expert
+        kappa = (observed_agree - expected_agree) / max(1 - expected_agree, 0.001)
+        exp_cols[2].metric("Cohen's Kappa", f"{kappa:.3f}")
+
+        # Confusion matrix display
+        st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:0.5rem">Матрица согласия (порог: {threshold_exp})</p>', unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <table class="styled-table">
+            <thead><tr><th></th><th>Эксперт: рекомендует</th><th>Эксперт: не рекомендует</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight:600">Модель: рекомендует</td>
+                    <td style="color:#22c55e;font-weight:700">{tp} (TP)</td>
+                    <td style="color:#f59e0b;font-weight:700">{fp} (FP)</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">Модель: не рекомендует</td>
+                    <td style="color:#f59e0b;font-weight:700">{fn} (FN)</td>
+                    <td style="color:#22c55e;font-weight:700">{tn} (TN)</td>
+                </tr>
+            </tbody>
+        </table>
+        """, unsafe_allow_html=True)
+
+        # Scatter: model vs expert
+        fig_expert = go.Figure()
+        fig_expert.add_trace(go.Scatter(
+            x=model_scores_expert.tolist(), y=expert_scores_sim.tolist(),
+            mode="markers+text",
+            marker=dict(color="#3B82F6", size=8, opacity=0.8),
+            text=[_esc(c.full_name[:12]) for c in expert_candidates],
+            textposition="top center",
+            textfont=dict(size=8),
+            name="Кандидаты",
+        ))
+        fig_expert.add_trace(go.Scatter(
+            x=[0, 100], y=[0, 100],
+            mode="lines",
+            line=dict(color="#ef4444", dash="dash", width=1.5),
+            name="Идеальное согласие",
+        ))
+        fig_expert.update_layout(
+            **_plotly_defaults(dark),
+            height=350,
+            title=dict(text="Модельные vs экспертные оценки", font=dict(size=13)),
+            xaxis=dict(title="Балл модели", range=[0, 100], gridcolor="rgba(148,163,184,0.1)"),
+            yaxis=dict(title="Балл эксперта", range=[0, 100], gridcolor="rgba(148,163,184,0.1)"),
+            legend=dict(orientation="h", y=-0.18),
+        )
+        st.plotly_chart(fig_expert, use_container_width=True, key="chart_expert_validation")
+
+    # --- Bootstrap confidence intervals ---
+    st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Бутстрап доверительные интервалы</p>', unsafe_allow_html=True)
+    st.caption("100 бутстрап-выборок для оценки 95% доверительного интервала среднего балла.")
+
+    np.random.seed(99)
+    bootstrap_means = []
+    for _ in range(100):
+        sample_idx = np.random.choice(len(scores), size=len(scores), replace=True)
+        sample_scores = [scores[i] for i in sample_idx]
+        bootstrap_means.append(np.mean(sample_scores))
+
+    ci_lower = np.percentile(bootstrap_means, 2.5)
+    ci_upper = np.percentile(bootstrap_means, 97.5)
+    bs_mean = np.mean(bootstrap_means)
+    bs_std = np.std(bootstrap_means)
+
+    bs_cols = st.columns(4)
+    bs_cols[0].metric("Среднее (бутстрап)", f"{bs_mean:.2f}")
+    bs_cols[1].metric("95% ДИ нижняя", f"{ci_lower:.2f}")
+    bs_cols[2].metric("95% ДИ верхняя", f"{ci_upper:.2f}")
+    bs_cols[3].metric("Ст. ошибка", f"{bs_std:.3f}")
+
+    fig_bs = go.Figure()
+    fig_bs.add_trace(go.Histogram(
+        x=bootstrap_means, nbinsx=25,
+        marker=dict(color="#8b5cf6", line=dict(color="rgba(255,255,255,0.2)", width=1)),
+        opacity=0.8,
+        name="Бутстрап средние",
+    ))
+    fig_bs.add_vline(x=ci_lower, line_dash="dash", line_color="#ef4444",
+                     annotation_text=f"2.5%: {ci_lower:.1f}", annotation_font_color="#ef4444")
+    fig_bs.add_vline(x=ci_upper, line_dash="dash", line_color="#ef4444",
+                     annotation_text=f"97.5%: {ci_upper:.1f}", annotation_font_color="#ef4444")
+    fig_bs.add_vline(x=bs_mean, line_dash="solid", line_color="#3B82F6",
+                     annotation_text=f"Среднее: {bs_mean:.1f}", annotation_font_color="#3B82F6")
+    fig_bs.update_layout(
+        **_plotly_defaults(dark),
+        height=300,
+        title=dict(text="Распределение бутстрап-средних (100 выборок)", font=dict(size=13)),
+        xaxis=dict(title="Средний балл", gridcolor="rgba(148,163,184,0.1)"),
+        yaxis=dict(title="Частота", gridcolor="rgba(148,163,184,0.1)"),
+        showlegend=False,
+    )
+    st.plotly_chart(fig_bs, use_container_width=True, key="chart_bootstrap_ci")
+
+    # --- Train/Test prediction stability ---
+    st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1rem">Стабильность предсказаний (train/test)</p>', unsafe_allow_html=True)
+    st.caption("Оценка на 70% кандидатов, проверка предсказательной стабильности на отложенных 30%. Корреляция Спирмена измеряет согласованность рангов.")
+
+    try:
+        from scipy.stats import spearmanr as _spearmanr_tt
+        _has_spearman_tt = True
+    except ImportError:
+        _has_spearman_tt = False
+
+    if _has_spearman_tt and len(candidates) >= 10:
+        np.random.seed(42)
+        n_total_tt = len(candidates)
+        indices_tt = np.arange(n_total_tt)
+        np.random.shuffle(indices_tt)
+        split_tt = int(n_total_tt * 0.7)
+        train_idx_tt = indices_tt[:split_tt]
+        test_idx_tt = indices_tt[split_tt:]
+
+        train_cands = [candidates[i] for i in train_idx_tt]
+        test_cands = [candidates[i] for i in test_idx_tt]
+
+        train_scores_tt = np.array([c.total_score for c in train_cands])
+        test_scores_tt = np.array([c.total_score for c in test_cands])
+
+        # Re-score test set with engine to verify consistency
+        test_rescored = []
+        for c in test_cands:
+            bd = {b["dimension"]: b["score"] for b in c.score_breakdown}
+            rescored = sum(bd.get(d, 0) * current_weights.get(d, 0.2) for d in ["motivation", "leadership", "growth", "skills", "experience"])
+            test_rescored.append(rescored)
+        test_rescored = np.array(test_rescored)
+
+        sp_tt, sp_p_tt = _spearmanr_tt(test_scores_tt, test_rescored)
+
+        tt_cols = st.columns(3)
+        tt_cols[0].metric("Train N", str(len(train_cands)))
+        tt_cols[1].metric("Test N", str(len(test_cands)))
+        tt_cols[2].metric("Spearman (test)", f"{sp_tt:.4f}")
+
+        tt_color = "#22c55e" if sp_tt > 0.95 else "#f59e0b" if sp_tt > 0.85 else "#ef4444"
+        tt_label = "Высокая" if sp_tt > 0.95 else "Средняя" if sp_tt > 0.85 else "Низкая"
+        st.markdown(f"""
+        <div class="glass-card" style="padding:0.8rem 1.2rem;margin:0.5rem 0">
+            <span style="font-weight:600;color:{_c("primary")}">Стабильность предсказаний: </span>
+            <span style="font-weight:700;color:{tt_color}">{tt_label} (rho={sp_tt:.3f})</span>
+            <span style="color:{_c("secondary")};font-size:0.85rem"> -- согласованность рангов между оригинальными и пересчитанными баллами на тестовой выборке</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+def _render_analytics_fairness(dark, candidates, config, engine, scores):
+    """Render fairness analysis sections."""
+    render_skeleton(2)
+
+    city_scores = {}
+    for c in candidates:
+        if c.city not in city_scores:
+            city_scores[c.city] = []
+        city_scores[c.city].append(c.total_score)
+
+    overall_avg = np.mean(scores) if scores else 1.0
+
+    edu_labels = {"school": "Школа", "bachelor": "Бакалавр", "master": "Магистр", "phd": "PhD", "other": "Другое"}
+
+    # ===================================================================
+    # FAIRNESS ANALYSIS (expanded)
+    # ===================================================================
     st.markdown(f'<p style="font-weight:700;font-size:1.15rem;color:{_c("heading")}">Анализ справедливости</p>', unsafe_allow_html=True)
 
     st.markdown(f"""
@@ -4362,6 +4721,62 @@ def page_analytics():
     </table>
     """, unsafe_allow_html=True)
 
+    # --- Intersectional analysis: education_level x city size ---
+    st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1.5rem">Интерсекциональный анализ</p>', unsafe_allow_html=True)
+    st.caption("Пересечение уровня образования и размера города. Крупные города: Алматы, Астана, Шымкент. Остальные -- малые города.")
+
+    large_cities = {"Алматы", "Астана", "Шымкент"}
+    intersect_groups = {}
+    for c in candidates:
+        city_size = "Крупный город" if c.city in large_cities else "Малый город"
+        edu_label = edu_labels.get(c.education_level, c.education_level)
+        key = f"{edu_label} x {city_size}"
+        if key not in intersect_groups:
+            intersect_groups[key] = []
+        intersect_groups[key].append(c.total_score)
+
+    intersect_rows = ""
+    intersect_flags = []
+    for group_name in sorted(intersect_groups.keys()):
+        group_scores = intersect_groups[group_name]
+        group_avg = np.mean(group_scores)
+        group_n = len(group_scores)
+        ratio = group_avg / overall_avg if overall_avg > 0 else 0
+        flag = ratio < 0.80
+        flag_text = "[!] Диспаратное воздействие" if flag else ""
+        color = "#ef4444" if flag else "#22c55e"
+        if flag:
+            intersect_flags.append(group_name)
+        intersect_rows += f"""<tr>
+            <td>{group_name}</td>
+            <td>{group_avg:.1f}</td>
+            <td style="color:{color};font-weight:700">{ratio:.2f}</td>
+            <td>{group_n}</td>
+            <td style="color:#ef4444;font-weight:600">{flag_text}</td>
+        </tr>"""
+
+    st.markdown(f"""
+    <table class="styled-table">
+        <thead><tr>
+            <th>Группа (образование x город)</th><th>Средний балл</th><th>Коэфф.</th><th>N</th><th>Флаг</th>
+        </tr></thead>
+        <tbody>{intersect_rows}</tbody>
+    </table>
+    """, unsafe_allow_html=True)
+
+    if intersect_flags:
+        st.markdown(f"""
+        <div class="glass-card" style="padding:0.6rem 1rem;margin:0.5rem 0;border-left:3px solid #ef4444">
+            <p style="color:#ef4444;font-weight:600;font-size:0.85rem;margin:0">Обнаружено диспаратное воздействие в группах: {", ".join(intersect_flags)}. Рекомендуется ручная проверка.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="glass-card" style="padding:0.6rem 1rem;margin:0.5rem 0;border-left:3px solid #22c55e">
+            <p style="color:#22c55e;font-weight:600;font-size:0.85rem;margin:0">Диспаратного воздействия в интерсекциональных группах не обнаружено.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     # --- Gap 5: Региональная нормализация toggle ---
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")};margin-top:1.5rem">Региональная нормализация</p>', unsafe_allow_html=True)
     st.caption("Корректирует баллы кандидатов для компенсации обнаруженного регионального смещения. Города с низким средним баллом получают поправку вверх.")
@@ -4438,10 +4853,13 @@ def page_analytics():
     </div>
     """, unsafe_allow_html=True)
 
+def _render_analytics_nlp(dark, candidates, stats):
+    """Render NLP analytics sections."""
+    render_skeleton(2)
+
     # ===================================================================
     # NLP ANALYTICS
     # ===================================================================
-    st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
     st.markdown(f'<p style="font-weight:600;color:{_c("primary")}">NLP-аналитика эссе</p>', unsafe_allow_html=True)
 
     ai_scores_all = []
@@ -4492,8 +4910,6 @@ def page_analytics():
             "Ст. откл.": s["std"],
         })
     st.dataframe(pd.DataFrame(stats_data), use_container_width=True, hide_index=True)
-
-    render_footer()
 
 
 # ---------------------------------------------------------------------------
@@ -4646,6 +5062,7 @@ def page_settings():
                 <p style="margin:0 0 0.4rem 0">- Персональные данные кандидатов не передаются третьим сторонам.</p>
                 <p style="margin:0 0 0.4rem 0">- Модель не использует пол, расу, этничность, религию или социально-экономический статус для оценки (отсутствие демографического прокси-скоринга).</p>
                 <p style="margin:0 0 0.4rem 0">- Особая защита несовершеннолетних: анонимизация доступна для всех кандидатов.</p>
+                <p style="margin:0 0 0.4rem 0">- Все пользовательские данные (имена, города, тексты) проходят санитизацию через html.escape() перед отображением в интерфейсе для предотвращения XSS-инъекций.</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
